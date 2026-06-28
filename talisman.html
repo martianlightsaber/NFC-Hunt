@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>道符 · Dao Fu</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700&display=swap');
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --paper: #f0e6c8;
+    --paper-dark: #d4c49a;
+    --cinnabar: #8b1a1a;
+    --cinnabar-bright: #c0392b;
+    --glow-color: #ff6b35;
+    --glow-soft: rgba(255, 107, 53, 0.6);
+    --ink: #2c1810;
+    --gold: #b8860b;
+  }
+
+  body {
+    background: #1a0f08;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Noto Serif SC', serif;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Atmospheric background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse at 30% 20%, rgba(80, 30, 10, 0.4) 0%, transparent 60%),
+      radial-gradient(ellipse at 70% 80%, rgba(60, 20, 5, 0.5) 0%, transparent 60%),
+      #1a0f08;
+    z-index: 0;
+  }
+
+  .scene {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 28px;
+    padding: 20px;
+  }
+
+  .title {
+    color: var(--gold);
+    font-size: 13px;
+    letter-spacing: 0.35em;
+    text-transform: uppercase;
+    opacity: 0.75;
+    text-align: center;
+  }
+
+  /* The talisman paper */
+  .talisman-wrap {
+    position: relative;
+    width: min(300px, 82vw);
+    aspect-ratio: 0.45;
+  }
+
+  .talisman-paper {
+    width: 100%;
+    height: 100%;
+    background:
+      linear-gradient(160deg, #f5e9cc 0%, #ecddb0 40%, #e0cf98 100%);
+    border-radius: 4px 4px 2px 2px;
+    position: relative;
+    box-shadow:
+      0 0 0 1.5px var(--paper-dark),
+      0 0 0 3px #a08040,
+      4px 8px 30px rgba(0,0,0,0.7),
+      inset 0 0 60px rgba(180,150,80,0.15);
+    overflow: visible;
+  }
+
+  /* Paper texture grain */
+  .talisman-paper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' opacity='0.07'/%3E%3C/svg%3E");
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  /* Red border lines */
+  .talisman-paper::after {
+    content: '';
+    position: absolute;
+    inset: 6px;
+    border: 1.5px solid rgba(139, 26, 26, 0.35);
+    border-radius: 2px;
+    pointer-events: none;
+  }
+
+  /* SVG canvas for talisman components */
+  .talisman-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* Individual glyph components */
+  .glyph-component {
+    opacity: 0;
+    transition: none;
+  }
+
+  .glyph-component.revealed {
+    opacity: 1;
+    animation: none;
+  }
+
+  .glyph-component.glowing {
+    animation: glyphGlow 1.6s ease-out forwards;
+  }
+
+  .glyph-component.final-glow {
+    animation: finalGlow 2s ease-in-out forwards;
+  }
+
+  @keyframes glyphGlow {
+    0%   { filter: drop-shadow(0 0 14px var(--glow-color)) drop-shadow(0 0 30px var(--glow-color)) brightness(1.8); opacity: 1; }
+    35%  { filter: drop-shadow(0 0 10px var(--glow-color)) drop-shadow(0 0 20px rgba(255,107,53,0.5)) brightness(1.4); opacity: 1; }
+    100% { filter: none; opacity: 1; }
+  }
+
+  @keyframes finalGlow {
+    0%   { filter: none; opacity: 1; }
+    20%  { filter: drop-shadow(0 0 16px var(--glow-color)) drop-shadow(0 0 36px var(--glow-color)) brightness(1.9); opacity: 1; }
+    50%  { filter: drop-shadow(0 0 10px var(--glow-color)) drop-shadow(0 0 22px rgba(255,107,53,0.6)) brightness(1.5); opacity: 1; }
+    100% { filter: none; opacity: 1; }
+  }
+
+  /* Completion flash over entire talisman */
+  .completion-flash {
+    position: absolute;
+    inset: 0;
+    border-radius: 4px 4px 2px 2px;
+    background: radial-gradient(ellipse at 50% 50%, rgba(255, 120, 50, 0.25) 0%, transparent 75%);
+    opacity: 0;
+    pointer-events: none;
+    z-index: 10;
+  }
+
+  .completion-flash.active {
+    animation: paperFlash 2.5s ease-out forwards;
+  }
+
+  @keyframes paperFlash {
+    0%   { opacity: 0; }
+    15%  { opacity: 1; }
+    60%  { opacity: 0.5; }
+    100% { opacity: 0; }
+  }
+
+  /* Trigger button area */
+  .trigger-zone {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .invoke-btn {
+    width: 100%;
+    padding: 14px 0;
+    background: transparent;
+    border: 1.5px solid rgba(176, 130, 50, 0.6);
+    border-radius: 2px;
+    color: var(--gold);
+    font-family: 'Noto Serif SC', serif;
+    font-size: 14px;
+    letter-spacing: 0.2em;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.3s, color 0.3s;
+  }
+
+  .invoke-btn::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(176,130,50,0.08), transparent);
+    opacity: 0;
+    transition: opacity 0.3s;
+  }
+
+  .invoke-btn:hover:not(:disabled)::before { opacity: 1; }
+  .invoke-btn:hover:not(:disabled) { border-color: rgba(176,130,50,0.9); color: #d4a830; }
+  .invoke-btn:disabled { opacity: 0.3; cursor: default; }
+
+  .invoke-btn:active:not(:disabled) {
+    transform: scale(0.98);
+  }
+
+  /* Step dots */
+  .step-dots {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: 1px solid rgba(176,130,50,0.4);
+    background: transparent;
+    transition: background 0.4s, border-color 0.4s, box-shadow 0.4s;
+  }
+
+  .dot.active {
+    background: var(--gold);
+    border-color: var(--gold);
+    box-shadow: 0 0 6px rgba(176,130,50,0.6);
+  }
+
+  /* Status text */
+  .status-text {
+    color: rgba(176,130,50,0.55);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    min-height: 18px;
+    text-align: center;
+    transition: opacity 0.5s;
+  }
+
+  .complete-msg {
+    color: var(--gold);
+    font-size: 15px;
+    letter-spacing: 0.25em;
+    text-align: center;
+    opacity: 0;
+    transition: opacity 1s;
+    margin-top: 4px;
+  }
+
+  .complete-msg.show { opacity: 1; }
+
+</style>
+</head>
+<body>
+
+<div class="scene">
+  <div class="title">道 符 · Daoist Talisman</div>
+
+  <div class="talisman-wrap">
+    <div class="talisman-paper" id="paper">
+      <div class="completion-flash" id="compFlash"></div>
+
+      <svg class="talisman-svg" viewBox="0 0 300 665" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <!-- Cinnabar ink style -->
+          <style>
+            .ink {
+              fill: none;
+              stroke: #8b1a1a;
+              stroke-linecap: round;
+              stroke-linejoin: round;
+            }
+            .ink-fill { fill: #8b1a1a; stroke: none; }
+          </style>
+        </defs>
+
+        <!-- COMPONENT 1: Crown header – the "命" heaven-command seal at the top -->
+        <g id="comp1" class="glyph-component">
+          <!-- Outer seal rectangle -->
+          <rect x="95" y="22" width="110" height="52" rx="3"
+                class="ink" stroke-width="2.2"/>
+          <!-- Inner double line top -->
+          <line x1="103" y1="31" x2="197" y2="31" class="ink" stroke-width="1.4"/>
+          <!-- Stylized 命 character inside -->
+          <text x="150" y="62" text-anchor="middle"
+                font-family="Noto Serif SC, serif" font-size="28"
+                font-weight="700" fill="#8b1a1a" letter-spacing="0">命</text>
+          <!-- Emanating dots -->
+          <circle cx="82" cy="48" r="2.5" class="ink-fill"/>
+          <circle cx="218" cy="48" r="2.5" class="ink-fill"/>
+          <line x1="88" y1="48" x2="95" y2="48" class="ink" stroke-width="1.5"/>
+          <line x1="205" y1="48" x2="212" y2="48" class="ink" stroke-width="1.5"/>
+        </g>
+
+        <!-- COMPONENT 2: Central main glyph – large 雷 (thunder/command) character -->
+        <g id="comp2" class="glyph-component">
+          <text x="150" y="230" text-anchor="middle"
+                font-family="Noto Serif SC, serif" font-size="118"
+                font-weight="700" fill="#8b1a1a" letter-spacing="0">雷</text>
+          <!-- Vertical center axis line above and below -->
+          <line x1="150" y1="90" x2="150" y2="112" class="ink" stroke-width="2"/>
+          <line x1="150" y1="248" x2="150" y2="272" class="ink" stroke-width="2"/>
+        </g>
+
+        <!-- COMPONENT 3: Left vertical sutra strip -->
+        <g id="comp3" class="glyph-component">
+          <!-- Vertical line with nodes -->
+          <line x1="62" y1="110" x2="62" y2="530" class="ink" stroke-width="1.8"/>
+          <circle cx="62" cy="155" r="4" class="ink" stroke-width="1.6"/>
+          <circle cx="62" cy="260" r="4" class="ink" stroke-width="1.6"/>
+          <circle cx="62" cy="370" r="4" class="ink" stroke-width="1.6"/>
+          <circle cx="62" cy="480" r="4" class="ink" stroke-width="1.6"/>
+          <!-- Small horizontal ticks -->
+          <line x1="54" y1="155" x2="70" y2="155" class="ink" stroke-width="1.4"/>
+          <line x1="54" y1="260" x2="70" y2="260" class="ink" stroke-width="1.4"/>
+          <line x1="54" y1="370" x2="70" y2="370" class="ink" stroke-width="1.4"/>
+          <line x1="54" y1="480" x2="70" y2="480" class="ink" stroke-width="1.4"/>
+          <!-- Stacked micro-glyphs on the left strip -->
+          <text x="62" y="210" text-anchor="middle"
+                font-family="Noto Serif SC, serif" font-size="17" fill="#8b1a1a">急</text>
+          <text x="62" y="320" text-anchor="middle"
+                font-family="Noto Serif SC, serif" font-size="17" fill="#8b1a1a">如</text>
+          <text x="62" y="432" text-anchor="middle"
+                font-family="Noto Serif SC, serif" font-size="17" fill="#8b1a1a">律</text>
+        </g>
+
+        <!-- COMPONENT 4: Right vertical sutra strip + abstract looping sigil -->
+        <g id="comp4" class="glyph-component">
+          <!-- Mirror vertical line -->
+          <line x1="238" y1="110" x2="238" y2="530" class="ink" stroke-width="1.8"/>
+          <circle cx="238" cy="155" r="4" class="ink" stroke-width="1.6"/>
+          <circle cx="238" cy="260" r="4" class="ink" stroke-width="1.6"/>
+          <circle cx="238" cy="370" r="4" class="ink" stroke-width="1.6"/>
+          <circle cx="238" cy="480" r="4" class="ink" stroke-width="1.6"/>
+          <line x1="230" y1="155" x2="246" y2="155" class="ink" stroke-width="1.4"/>
+          <line x1="230" y1="260" x2="246" y2="260" class="ink" stroke-width="1.4"/>
+          <line x1="230" y1="370" x2="246" y2="370" class="ink" stroke-width="1.4"/>
+          <line x1="230" y1="480" x2="246" y2="480" class="ink" stroke-width="1.4"/>
+          <text x="238" y="210" text-anchor="middle"
+                font-family="Noto Serif SC, serif" font-size="17" fill="#8b1a1a">令</text>
+          <text x="238" y="320" text-anchor="middle"
+                font-family="Noto Serif SC, serif" font-size="17" fill="#8b1a1a">敕</text>
+          <text x="238" y="432" text-anchor="middle"
+                font-family="Noto Serif SC, serif" font-size="17" fill="#8b1a1a">令</text>
+          <!-- Abstract looping sigil in center-right area -->
+          <path d="M150 290 C170 290, 200 300, 210 320 C220 340, 205 365, 185 362
+                   C165 359, 152 340, 155 318 C158 296, 178 285, 195 295
+                   C212 305, 215 330, 200 345"
+                class="ink" stroke-width="2" fill="none"/>
+          <circle cx="200" cy="345" r="3.5" class="ink-fill"/>
+        </g>
+
+        <!-- COMPONENT 5: Base footer seal + completing strokes -->
+        <g id="comp5" class="glyph-component">
+          <!-- Lower decorative band -->
+          <line x1="55" y1="540" x2="245" y2="540" class="ink" stroke-width="1.8"/>
+          <line x1="72" y1="548" x2="228" y2="548" class="ink" stroke-width="1"/>
+
+          <!-- Footer seal box -->
+          <rect x="90" y="562" width="120" height="70" rx="2"
+                class="ink" stroke-width="2"/>
+          <rect x="97" y="569" width="106" height="56" rx="1"
+                class="ink" stroke-width="0.8"/>
+
+          <!-- 敕令 in footer seal -->
+          <text x="150" y="612" text-anchor="middle"
+                font-family="Noto Serif SC, serif" font-size="30"
+                font-weight="700" fill="#8b1a1a" letter-spacing="4">敕令</text>
+
+          <!-- Corner flourishes -->
+          <path d="M72 540 L62 530" class="ink" stroke-width="1.5"/>
+          <path d="M228 540 L238 530" class="ink" stroke-width="1.5"/>
+          <circle cx="62" cy="530" r="3" class="ink" stroke-width="1.4"/>
+          <circle cx="238" cy="530" r="3" class="ink" stroke-width="1.4"/>
+
+          <!-- Bottom tip of talisman – pointed terminal -->
+          <path d="M100 632 Q150 655 200 632" class="ink" stroke-width="1.6"/>
+          <line x1="150" y1="655" x2="150" y2="648" class="ink" stroke-width="1.5"/>
+        </g>
+
+      </svg>
+    </div><!-- /talisman-paper -->
+  </div><!-- /talisman-wrap -->
+
+  <div class="trigger-zone">
+    <div class="step-dots">
+      <div class="dot" id="dot0"></div>
+      <div class="dot" id="dot1"></div>
+      <div class="dot" id="dot2"></div>
+      <div class="dot" id="dot3"></div>
+      <div class="dot" id="dot4"></div>
+    </div>
+
+    <div class="status-text" id="statusText">Touch to invoke the first seal</div>
+
+    <button class="invoke-btn" id="invokeBtn" onclick="invokeNext()">
+      ✦ &nbsp;召符&nbsp; Invoke&nbsp; ✦
+    </button>
+
+    <div class="complete-msg" id="completeMsg">符成 · The Talisman is Complete</div>
+  </div>
+</div>
+
+<script>
+  const components = [
+    { id: 'comp1', label: "命 — Heaven's Command seal revealed" },
+    { id: 'comp2', label: "雷 — Thunder glyph awakened" },
+    { id: 'comp3', label: "Left sutra column inscribed" },
+    { id: 'comp4', label: "Right column & binding sigil drawn" },
+    { id: 'comp5', label: "敕令 — Edict seal closes the fu" },
+  ];
+
+  let step = 0;
+  const btn = document.getElementById('invokeBtn');
+  const statusEl = document.getElementById('statusText');
+  const completeEl = document.getElementById('completeMsg');
+  const flashEl = document.getElementById('compFlash');
+
+  function setStatus(txt) {
+    statusEl.style.opacity = '0';
+    setTimeout(() => { statusEl.textContent = txt; statusEl.style.opacity = '1'; }, 300);
+  }
+
+  function invokeNext() {
+    if (step >= components.length) return;
+
+    const { id, label } = components[step];
+    const el = document.getElementById(id);
+    const dot = document.getElementById('dot' + step);
+
+    // Reveal with glow
+    el.classList.remove('glowing', 'final-glow');
+    el.classList.add('revealed');
+    // Force reflow to restart animation
+    void el.offsetWidth;
+    el.classList.add('glowing');
+
+    dot.classList.add('active');
+    setStatus(label);
+
+    step++;
+
+    if (step === components.length) {
+      // All components revealed — do final complete sequence
+      btn.disabled = true;
+      setTimeout(() => doCompletionSequence(), 1800);
+    } else {
+      const prompts = [
+        'Touch to inscribe the thunder character',
+        'Touch to draw the left sutra column',
+        'Touch to draw the right column',
+        'Touch to place the final seal',
+      ];
+      setTimeout(() => setStatus(prompts[step - 1] || ''), 1400);
+    }
+  }
+
+  function doCompletionSequence() {
+    // Trigger final glow on all components with stagger
+    components.forEach(({ id }, i) => {
+      const el = document.getElementById(id);
+      setTimeout(() => {
+        el.classList.remove('glowing', 'final-glow');
+        void el.offsetWidth;
+        el.classList.add('final-glow');
+      }, i * 160);
+    });
+
+    // Paper flash
+    setTimeout(() => {
+      flashEl.classList.remove('active');
+      void flashEl.offsetWidth;
+      flashEl.classList.add('active');
+    }, 300);
+
+    // Show completion message
+    setTimeout(() => {
+      setStatus('');
+      completeEl.classList.add('show');
+    }, 900);
+  }
+</script>
+</body>
+</html>
