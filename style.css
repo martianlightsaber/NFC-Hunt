@@ -151,6 +151,12 @@ body {
 }*/
 
 .neon-btn {
+  display: flex;         
+  justify-content: center; /* 🆕 Centers text horizontally */
+  align-items: center;     /* 🆕 Centers text vertically */
+  
+  text-decoration: none;
+  
   /* 1. Match the exact dark transparency of the speech bubble */
   background: rgba(0, 0, 0, 0.6);
   border: 2px solid #00f3ff;
