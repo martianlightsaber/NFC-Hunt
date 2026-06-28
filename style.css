@@ -1,0 +1,222 @@
+body {
+  background-color: #000000;
+  margin: 0;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+
+  /* 👆 Shows a clicking hand cursor on desktop to signal interactivity */
+  cursor: pointer;
+}
+
+/* Master wrapper controls global page positioning */
+.interactive-layout {
+  position: fixed;
+  top: 33vh;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 90%;
+  max-width: 450px; /* Slightly wider to give your structure breathing room */
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* Centers both the character block AND the buttons block */
+  gap: 60px; /* Generous gap between dialogue setup and the button menu */
+}
+
+/* Container layout for the bubble and prompt stacked vertically */
+.bubble-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;  /* Act as an anchor point for the absolute prompt inside it */
+}
+
+.character-container {
+  display: flex;
+  flex-direction: row;
+  align-items: center; /* Sprite stays perfectly centered to the 130px bubble now! */
+  gap: 15px;
+  width: 100%;
+  justify-content: center;
+}
+
+.sprite {
+  width: 100px;         /* 📱 Scaled down to 100px for mobile screens */
+  height: auto;
+  flex-shrink: 0;       /* Prevents the browser from squishing the image */
+  animation: floatAnimation 3s ease-in-out infinite;
+}
+@keyframes floatAnimation {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+}
+
+.speech-bubble {
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid #00f3ff;
+  border-radius: 12px;
+  padding: 10px;
+  
+  /* 🔒 FORCE LOCK THE SIZE */
+  width: 200px;         /* Forces the mobile width to stay exactly 200px */
+  height: 100px;        /* Your updated 130px height */
+  flex-shrink: 0;       /* 🛑 ABSOLUTELY STOPS it from squishing initially */
+  
+  overflow: hidden;   
+  display: flex;
+  align-items: center;
+  box-sizing: border-box; 
+
+  box-shadow: 
+    inset 0px 0px 8px rgba(0, 243, 255, 0.3),
+    0px 0px 8px rgba(0, 243, 255, 0.6),
+    0px 0px 20px rgba(0, 243, 255, 0.4);
+}
+
+#typing-text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.4;
+  color: #e0faff; /* Ultra-light blue text so it looks like the bright core of a lightsaber */
+  word-break: break-word;
+  
+  /* 💡 TEXT GLOW */
+  text-shadow: 
+    0px 0px 4px rgba(0, 243, 255, 0.8),
+    0px 0px 12px rgba(0, 243, 255, 0.4);
+}
+
+/* 🆕 Tap Prompt Styles */
+#tap-prompt {
+  font-size: 11px;
+  color: #00f3ff;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: sans-serif;
+  text-shadow: 0px 0px 5px rgba(0, 243, 255, 0.8);
+  animation: pulseAnimation 1.5s ease-in-out infinite;
+  
+  /* 🔒 LOCK POSITION WITHOUT AFFECTING THE SPRITE
+     This detaches the prompt from the layout calculation entirely */
+  position: absolute;
+  bottom: -27px;      /* Puts it exactly 22 pixels below the speech bubble */
+  
+  /* Smoothly fades in and out instead of snapping instantly */
+  transition: opacity 0.2s ease-in-out, visibility 0.2s; 
+}
+
+/* Pulsing effect keyframes */
+@keyframes pulseAnimation {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* 🔒 Class used by JavaScript to hide the prompt completely */
+.hidden {
+  opacity: 0 !important;
+  visibility: hidden !important;
+}
+
+/* 🆕 Button Container Sizing and Spacing */
+#button-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+  max-width: 280px; /* Restricts button length so they look like elegant pills */
+  transition: opacity 0.5s ease-in-out;
+}
+
+/* 🆕 Lightsaber Style Pill Buttons */
+/*.neon-btn {
+  background: rgba(0, 0, 0, 0.7);
+  border: 2px solid #00f3ff;
+
+  border-radius: 50px; 
+  
+  color: #e0faff;
+  font-family: sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 20px;
+  width: 100%;
+  cursor: pointer;
+  box-sizing: border-box;
+  
+  /* Neon Glow matching your speech bubble *//*
+  text-shadow: 0px 0px 4px rgba(0, 243, 255, 0.6);
+  box-shadow: 
+    inset 0px 0px 5px rgba(0, 243, 255, 0.3),
+    0px 0px 6px rgba(0, 243, 255, 0.5);
+    
+  transition: all 0.2s ease;
+}*/
+
+.neon-btn {
+  /* 1. Match the exact dark transparency of the speech bubble */
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid #00f3ff;
+  
+  /* Perfect capsule curvature */
+  border-radius: 50px; 
+  
+  /* 2. Pure white core text makes the text itself look like it's emitting light */
+  color: #ffffff; 
+  font-family: sans-serif;
+  font-size: 13px;
+  font-weight: bold;
+  letter-spacing: 0.5px;
+  padding: 12px 20px;
+  width: 100%;
+  cursor: pointer;
+  box-sizing: border-box;
+  outline: none; /* Removes any default browser focus lines that dull the glow */
+  
+  /* 3. INTENSE TEXT GLOW */
+  text-shadow: 
+    0px 0px 4px rgba(0, 243, 255, 1),
+    0px 0px 10px rgba(0, 243, 255, 0.6);
+
+  /* 4. MAXED OUT LIGHTSABER BOX GLOW
+     We use 4 distinct layers here to create a dense, bright core that radiates outward */
+  box-shadow: 
+    inset 0px 0px 6px rgba(0, 243, 255, 0.2),  /* Inner edge glow */
+    0px 0px 8px rgba(0, 243, 255, 0.5),       /* Sharp, intense outer edge */
+    0px 0px 8px rgba(0, 243, 255, 0.5),       /* Medium ambient lighting */
+    0px 0px 10px rgba(0, 243, 255, 0.1);       /* Deep, dramatic light scatter */
+    
+  transition: all 0.2s ease-in-out;
+}
+
+/* Subtle glowing pulse when user hovers or taps a button */
+.neon-btn:hover {
+  background: rgba(0, 243, 255, 0.2);
+  box-shadow: 
+    inset 0px 0px 8px rgba(0, 243, 255, 0.5),
+    0px 0px 15px rgba(0, 243, 255, 0.8);
+}
+
+
+
+/* For desktop */
+@media (min-width: 768px) {
+  .interactive-layout {
+    /* Keeps everything centered globally on desktop too. 
+       If you want it forced to the left edge of desktop screens, change left to 15% and remove transform */
+    left: 50%;
+    transform: translateX(-50%);
+  }
+
+  .character-container {
+    top: 25vh;
+    left: 10%;          /* Moves it back to the left side on desktop */
+    transform: none;    /* Turns off the mobile centering trick */
+    gap: 15px;
+  }
+  
+  .sprite {
+    width: 150px;       /* 💻 Bumps the sprite back up to full size on desktop */
+  }
+
+  .speech-bubble {
+    max-width: 220px;   /* Bumps the text bubble back up to full size */
+  }
+}
