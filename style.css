@@ -18,7 +18,7 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center; /* Centers both the character block AND the buttons block */
-  gap: 60px; /* Generous gap between dialogue setup and the button menu */
+  gap: clamp(30px, 8vh, 60px); /* Generous gap between dialogue setup and the button menu */
 }
 
 /* Container layout for the bubble and prompt stacked vertically */
@@ -33,31 +33,32 @@ body {
   display: flex;
   flex-direction: row;
   align-items: center; /* Sprite stays perfectly centered to the 130px bubble now! */
-  gap: 15px;
+  gap: clamp(8px, 2vh, 15px);
   width: 100%;
   justify-content: center;
 }
 
 .sprite {
-  width: 100px;         /* 📱 Scaled down to 100px for mobile screens */
+  width: clamp(90px, 25vw, 150px);         /* 📱 Scaled down to 100px for mobile screens */
   height: auto;
+  --float-distance: 10%; /* relative to element */
   flex-shrink: 0;       /* Prevents the browser from squishing the image */
   animation: floatAnimation 3s ease-in-out infinite;
 }
 @keyframes floatAnimation {
   0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-15px); }
+  50% { transform: translateY(-10%); }
 }
 
 .speech-bubble {
   background: rgba(0, 0, 0, 0.6);
   border: 2px solid #00f3ff;
-  border-radius: 12px;
-  padding: 10px;
+  border-radius: clamp(8px, 3vw, 14px);
+  padding: clamp(8px, 2vw, 12px);
   
   /* 🔒 FORCE LOCK THE SIZE */
-  width: 200px;         /* Forces the mobile width to stay exactly 200px */
-  height: 100px;        /* Your updated 130px height */
+  width: clamp(160px, 50vw, 220px);         /* Forces the mobile width to stay exactly 200px */
+  height: clamp(80px, 25vw, 130px);        /* Your updated 130px height */
   flex-shrink: 0;       /* 🛑 ABSOLUTELY STOPS it from squishing initially */
   
   overflow: hidden;   
@@ -66,38 +67,38 @@ body {
   box-sizing: border-box; 
 
   box-shadow: 
-    inset 0px 0px 8px rgba(0, 243, 255, 0.3),
-    0px 0px 8px rgba(0, 243, 255, 0.6),
-    0px 0px 20px rgba(0, 243, 255, 0.4);
+    inset 0px 0px 0.5em rgba(0, 243, 255, 0.3),
+    0px 0px 0.5em rgba(0, 243, 255, 0.6),
+    0px 0px 1.4em rgba(0, 243, 255, 0.4);
 }
 
 #typing-text {
   margin: 0;
-  font-size: 14px;
+  font-size: clamp(13px, 3.4vw, 16px);
   line-height: 1.4;
   color: #e0faff; /* Ultra-light blue text so it looks like the bright core of a lightsaber */
   word-break: break-word;
   
   /* 💡 TEXT GLOW */
   text-shadow: 
-    0px 0px 4px rgba(0, 243, 255, 0.8),
-    0px 0px 12px rgba(0, 243, 255, 0.4);
+    0px 0px 0.3em rgba(0, 243, 255, 0.8),
+    0px 0px 0.85em rgba(0, 243, 255, 0.4);
 }
 
 /* 🆕 Tap Prompt Styles */
 #tap-prompt {
-  font-size: 11px;
+  font-size: clamp(9px, 2.2vw, 11px);
   color: #00f3ff;
   text-transform: uppercase;
-  letter-spacing: 1px;
+  letter-spacing: 0.08em;
   font-family: sans-serif;
-  text-shadow: 0px 0px 5px rgba(0, 243, 255, 0.8);
+  text-shadow: 0px 0px 0.35em rgba(0, 243, 255, 0.8);
   animation: pulseAnimation 1.5s ease-in-out infinite;
   
   /* 🔒 LOCK POSITION WITHOUT AFFECTING THE SPRITE
      This detaches the prompt from the layout calculation entirely */
   position: absolute;
-  bottom: -27px;      /* Puts it exactly 22 pixels below the speech bubble */
+  bottom: -2.2em;      /* Puts it some distance below the speech bubble that scales with font size */
   
   /* Smoothly fades in and out instead of snapping instantly */
   transition: opacity 0.2s ease-in-out, visibility 0.2s; 
@@ -119,36 +120,11 @@ body {
 #button-container {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: clamp(6px, 1.5vh, 10px);
   width: 100%;
   max-width: 280px; /* Restricts button length so they look like elegant pills */
   transition: opacity 0.5s ease-in-out;
 }
-
-/* 🆕 Lightsaber Style Pill Buttons */
-/*.neon-btn {
-  background: rgba(0, 0, 0, 0.7);
-  border: 2px solid #00f3ff;
-
-  border-radius: 50px; 
-  
-  color: #e0faff;
-  font-family: sans-serif;
-  font-size: 13px;
-  font-weight: 600;
-  padding: 10px 20px;
-  width: 100%;
-  cursor: pointer;
-  box-sizing: border-box;
-  
-  /* Neon Glow matching your speech bubble *//*
-  text-shadow: 0px 0px 4px rgba(0, 243, 255, 0.6);
-  box-shadow: 
-    inset 0px 0px 5px rgba(0, 243, 255, 0.3),
-    0px 0px 6px rgba(0, 243, 255, 0.5);
-    
-  transition: all 0.2s ease;
-}*/
 
 .neon-btn {
   display: flex;         
@@ -162,15 +138,15 @@ body {
   border: 2px solid #00f3ff;
   
   /* Perfect capsule curvature */
-  border-radius: 50px; 
+  border-radius: 999px; 
   
   /* 2. Pure white core text makes the text itself look like it's emitting light */
   color: #ffffff; 
   font-family: sans-serif;
-  font-size: 13px;
+  font-size: clamp(12px, 3vw, 14px);
   font-weight: bold;
-  letter-spacing: 0.5px;
-  padding: 12px 20px;
+  letter-spacing: 0.04em;
+  padding: clamp(8px, 2.5vw, 12px) clamp(14px, 4vw, 20px);
   width: 100%;
   cursor: pointer;
   box-sizing: border-box;
@@ -178,16 +154,16 @@ body {
   
   /* 3. INTENSE TEXT GLOW */
   text-shadow: 
-    0px 0px 4px rgba(0, 243, 255, 1),
-    0px 0px 10px rgba(0, 243, 255, 0.6);
+    0px 0px 0.3em rgba(0, 243, 255, 1),
+    0px 0px 0.75em rgba(0, 243, 255, 0.6);
 
   /* 4. MAXED OUT LIGHTSABER BOX GLOW
      We use 4 distinct layers here to create a dense, bright core that radiates outward */
   box-shadow: 
-    inset 0px 0px 6px rgba(0, 243, 255, 0.2),  /* Inner edge glow */
-    0px 0px 8px rgba(0, 243, 255, 0.5),       /* Sharp, intense outer edge */
-    0px 0px 8px rgba(0, 243, 255, 0.5),       /* Medium ambient lighting */
-    0px 0px 10px rgba(0, 243, 255, 0.1);       /* Deep, dramatic light scatter */
+    inset 0px 0px 0.45em rgba(0, 243, 255, 0.2),  /* Inner edge glow */
+    0px 0px 0.6em rgba(0, 243, 255, 0.5),       /* Sharp, intense outer edge */
+    0px 0px 0.6em rgba(0, 243, 255, 0.5),       /* Medium ambient lighting */
+    0px 0px 0.75em rgba(0, 243, 255, 0.1);       /* Deep, dramatic light scatter */
     
   transition: all 0.2s ease-in-out;
 }
@@ -196,11 +172,76 @@ body {
 .neon-btn:hover {
   background: rgba(0, 243, 255, 0.2);
   box-shadow: 
-    inset 0px 0px 8px rgba(0, 243, 255, 0.5),
-    0px 0px 15px rgba(0, 243, 255, 0.8);
+    inset 0px 0px 0.6em rgba(0, 243, 255, 0.5),
+    0px 0px 1.15em rgba(0, 243, 255, 0.8);
 }
 
+/* Disabled state for the ENTER button until required fields are filled */
+.neon-btn.is-disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  text-shadow: none;
+  box-shadow:
+    inset 0px 0px 0.3em rgba(0, 243, 255, 0.1),
+    0px 0px 0.3em rgba(0, 243, 255, 0.2);
+}
 
+.neon-btn.is-disabled:hover {
+  background: rgba(0, 0, 0, 0.6);
+}
+
+/* Matching pill-style text inputs for Cultivator Name / Ticket Number */
+.neon-input {
+  background: rgba(255, 255, 255, 0.25);
+  border: 2px solid #00f3ff;
+  border-radius: 0px;
+  color: #ffffff;
+  font-family: sans-serif;
+  font-size: clamp(16px, 2.2vw, 20px);
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  padding: clamp(10px, 2.5vw, 12px) clamp(14px, 4vw, 20px);
+  width: 100%;
+  box-sizing: border-box;
+  outline: none;
+  cursor: text;
+  text-shadow: 0px 0px 0.3em rgba(0, 243, 255, 0.6);
+  box-shadow:
+    inset 0px 0px 0.4em rgba(0, 243, 255, 0.2),
+    0px 0px 0.5em rgba(0, 243, 255, 0.4);
+  transition: all 0.2s ease-in-out;
+}
+
+.neon-input::placeholder {
+  color: rgba(224, 250, 255, 0.5);
+  text-shadow: none;
+}
+
+.neon-input:focus {
+  background: rgba(0, 243, 255, 0.08);
+  box-shadow:
+    inset 0px 0px 0.5em rgba(0, 243, 255, 0.4),
+    0px 0px 0.75em rgba(0, 243, 255, 0.7);
+}
+
+/* Extra breathing room between the fields and the ENTER button */
+#enter-btn {
+  margin-top: clamp(6px, 1.5vh, 10px);
+}
+
+/* Error message shown when ENTER is tapped with empty fields */
+.entry-error {
+  display: none;
+  color: #ff4d4d;
+  font-size: clamp(10px, 2.6vw, 12px);
+  font-weight: 600;
+  text-align: center;
+  text-shadow: 0px 0px 0.4em rgba(255, 77, 77, 0.6);
+}
+
+.entry-error.visible {
+  display: block;
+}
 
 /* For desktop */
 @media (min-width: 768px) {

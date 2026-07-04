@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wang Chuan Tech - Story Start</title>
+    <link rel="stylesheet" href="story.css">
+</head>
+<body>
+
+    <div class="scene-wrapper">
+        <!-- 1. The Panoramic Backdrop -->
+        <div id="backdrop" class="backdrop"></div>
+
+        <!-- 2. The Parting Clouds Overlay -->
+        <div id="clouds-container" class="clouds-container">
+            <div class="cloud cloud-left"></div>
+            <div class="cloud cloud-right"></div>
+        </div>
+
+        <!-- 3. The Custom Dialogue Textbox -->
+        <div id="textbox-container" class="textbox-container">
+            
+            <!-- Character Speaker Group (Binds portrait and nameplate vertically) -->
+            <div id="speaker-group" class="speaker-group" style="display: none;">
+                <!-- Character Portrait -->
+                <div id="character-portrait" class="character-portrait">
+                    <img id="portrait-img" src="" alt="Character Portrait">
+                </div>
+                <!-- Character Nameplate -->
+                <div id="nameplate" class="nameplate" style="display: none;">
+                    <span id="name-text"></span>
+                </div>
+            </div>
+            <!-- Dialogue Text Inner Container -->
+            <div class="textbox-inner">
+                <p id="dialogue-text"></p>
+                <div id="tap-indicator" class="tap-indicator hidden">▼ Tap to continue</div>
+            </div>
+            
+        </div>
+        <!-- 4. Choice Buttons Overlay (5 Rounded Rectangles) -->
+        <div id="choices-container" class="choices-container hidden">
+            <button class="choice-btn" data-choice="1">Spirit Beast Inquiry</button>
+            <button class="choice-btn" data-choice="2">Rogue Cultivator Sighting</button>
+            <button class="choice-btn" data-choice="3">Ghost Gate Seal Leak</button>
+            <button class="choice-btn" data-choice="4">Herb Gathering Request</button>
+            <button class="choice-btn" data-choice="5">Sect Barrier Crack</button>
+        </div>
+    </div>
+
+    <script src="story.js"></script>
+</body>
+</html>

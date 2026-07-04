@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Wang Chuan Tech - Story Start</title>
+    <link rel="stylesheet" href="story.css">
+</head>
+<body>
+
+    <div class="scene-wrapper">
+        <!-- Back link overlay -->
+        <a id="back-link" href="story.html?skip=requests" class="back-link">&laquo; back to request list</a>
+
+        <!-- 1. The Panoramic Backdrop -->
+        <div id="backdrop" class="backdrop-mission1"></div>
+
+        <!-- 2. The Custom Dialogue Textbox -->
+        <div id="textbox-container" class="textbox-container">
+            
+            <!-- Character Speaker Group (Binds portrait and nameplate vertically) -->
+            <div id="speaker-group" class="speaker-group" style="display: none;">
+                <!-- Character Portrait -->
+                <div id="character-portrait" class="character-portrait">
+                    <img id="portrait-img" src="" alt="Character Portrait">
+                </div>
+                <!-- Character Nameplate -->
+                <div id="nameplate" class="nameplate" style="display: none;">
+                    <span id="name-text"></span>
+                </div>
+            </div>
+            <!-- Dialogue Text Inner Container -->
+            <div class="textbox-inner">
+                <p id="dialogue-text"></p>
+                <div id="tap-indicator" class="tap-indicator hidden">▼ Tap to continue</div>
+            </div>
+            
+        </div>
+        <!-- 3. Choice Buttons Overlay (1 Rounded Rectangle) -->
+        <div id="choices-container" class="choices-container hidden">
+            <button class="choice-btn" data-choice="1">Where do you think he went?</button>
+        </div>
+        <!-- 4. Hint box Overlay (1 Rounded Rectangle) -->
+        <div id="hint-container" class="hint-container hidden">
+            <div class="hint-content">
+                <div id="hint-portrait" class="hint-portrait">
+                    <img id="hint-portrait-img" src="images/baiwuchang_pfp.png" alt="Bai Wuchang">
+                </div>
+                <div id="hint-box" class="hint-box">
+                    <span id="hint-text"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="mission1.js"></script>
+</body>
+</html>
