@@ -1,0 +1,36 @@
+.scene-layout {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  overflow: hidden;
+  padding: 1rem;
+  background-color: #101318;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
+.orientation-warning {
+  display: none;
+}
+
+@media (orientation: landscape) and (pointer: coarse) {
+  .orientation-warning {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: grid;
+    place-items: center;
+    padding: 2rem;
+    color: #fff;
+    background: #101318;
+    text-align: center;
+  }
+
+  .orientation-warning p {
+    max-width: 22rem;
+    font-size: 1.25rem;
+  }
+}

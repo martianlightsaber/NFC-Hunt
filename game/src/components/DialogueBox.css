@@ -1,0 +1,81 @@
+.textbox-container {
+  position: absolute;
+  bottom: 6vh;
+  left: 50%;
+  width: min(90vw, 480px);
+  aspect-ratio: 480 / 155;
+  margin: 0;
+  transform: translateX(-50%);
+  background-image: url('/images/textbox.png');
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+}
+
+.textbox-inner {
+  position: absolute;
+  top: 18%;
+  right: 10%;
+  bottom: 15%;
+  left: 10%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+}
+
+.textbox-container.has-portrait .textbox-inner {
+  left: 38%;
+}
+
+.dialogue-text {
+  margin: 0;
+  color: #000;
+  font-size: clamp(13px, 3.4vw, 16px);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.speaker-group {
+  position: absolute;
+  bottom: 17%;
+  left: 8%;
+  z-index: 1;
+  display: flex;
+  width: 28%;
+  flex-direction: column;
+  align-items: center;
+}
+
+.character-portrait {
+  width: 100%;
+  aspect-ratio: 1;
+}
+
+.character-portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(-0.3em 0.15em 0.3em rgb(0 0 0 / 60%));
+  transform: translateY(8%);
+}
+
+.nameplate {
+  display: flex;
+  width: 100%;
+  max-width: 100%;
+  justify-content: center;
+  border: 1.5px solid #2c1c0f;
+  border-radius: 6px;
+  background: #f4f2e0;
+}
+
+.nameplate span {
+  overflow: hidden;
+  color: #2c1c0f;
+  font-size: clamp(10px, 2.6vw, 13px);
+  font-weight: 700;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
