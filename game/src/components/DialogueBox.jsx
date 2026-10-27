@@ -1,5 +1,9 @@
 import './DialogueBox.css'
 
+function assetUrl(path) {
+  return `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`
+}
+
 function DialogueBox({ text, speaker, portrait }) {
   const hasSpeaker = Boolean(speaker || portrait)
 
@@ -12,7 +16,7 @@ function DialogueBox({ text, speaker, portrait }) {
         <div className="speaker-group">
           {portrait && (
             <div className="character-portrait">
-              <img src={portrait} alt={`${speaker || 'Character'} portrait`} />
+              <img src={assetUrl(portrait)} alt={`${speaker || 'Character'} portrait`} />
             </div>
           )}
 
