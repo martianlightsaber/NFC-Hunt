@@ -56,16 +56,25 @@ export function getOpeningStory(gameState) {
   const remainingCount = REQUIRED_MISSION_IDS.length - completedCount
   const fragmentWord = remainingCount === 1 ? 'fragment' : 'fragments'
 
-  const finalInstructionsLine = {
-    type: 'final-instructions',
-    speaker: 'Bai Wuchang',
-    portrait: '/images/baiwuchang_pfp.png',
-    text: 'Bring the completed soul to the event booth for spiritual healing.',
-  }
+  const finalEndingDialogue = [
+    {
+      speaker: 'Bai Wuchang',
+      portrait: '/images/baiwuchang_pfp.png',
+      text: 'The completed soul feels whole and steady at last.',
+    },
+    {
+      type: 'final-instructions',
+      speaker: 'Bai Wuchang',
+      portrait: '/images/baiwuchang_pfp.png',
+      text: 'Bring the completed soul to the event booth for spiritual healing.',
+    },
+  ]
 
   if (completedCount === REQUIRED_MISSION_IDS.length) {
     if (gameState.completionInstructionsSeen) {
-      return [finalInstructionsLine]
+      return gameState.finalInstructionsActive
+        ? [finalEndingDialogue.find((line) => line.type === 'final-instructions')]
+        : finalEndingDialogue
     }
 
     return [
@@ -80,7 +89,7 @@ export function getOpeningStory(gameState) {
           (missionId) => missions[missionId].collectible,
         ),
       },
-      finalInstructionsLine,
+      ...finalEndingDialogue,
     ]
   }
 

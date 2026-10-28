@@ -174,4 +174,40 @@ export const missions = {
       },
     ],
   },
+
+  //------------//
+  // MISSION #6 //
+  //------------//
+
+    'mission-6': {
+    title: 'The Soul’s Calling',
+    backgroundImage: '/images/moonlitgarden.jpg',
+    dialogue: [
+      {
+        text: 'As you hold the completed soul, you feel a sudden tug pull through it.',
+      },
+      {
+        speaker: 'Bai Wuchang',
+        portrait: '/images/baiwuchang_pfp.png',
+        text: 'Something is calling to the soul from beyond the booth.',
+      },
+      {
+        speaker: 'Bai Wuchang',
+        portrait: '/images/baiwuchang_pfp.png',
+        text: 'Follow that pull and search for its source.',
+      },
+    ],
+    collectible: {
+      id: 'soul-calling-trace',
+      name: 'Soul’s Calling Trace',
+      image: null,
+    },
+    wrapUpDialogue: [
+      {
+        speaker: 'Bai Wuchang',
+        portrait: '/images/baiwuchang_pfp.png',
+        text: 'We have found a trace of what called to the soul. We must investigate further.',
+      },
+    ],
+  },
 }

@@ -44,6 +44,14 @@ function CollectionActivation() {
           setError('This collection activation is not recognized.')
           return
         }
+        
+        if (
+          missionId === 'mission-6' &&
+          (gameState.playerCategory !== 'add-on' || !gameState.mission6Unlocked)
+        ) {
+          navigate('/opening', { replace: true })
+          return
+        }
 
         if (!activeMissionId || missionId !== activeMissionId) {
           setError('Open the matching mission before scanning its token.')

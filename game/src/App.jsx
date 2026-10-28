@@ -3,6 +3,7 @@ import CategoryBootstrap from './components/CategoryBootstrap'
 import WelcomeScreen from './components/WelcomeScreen'
 import OpeningStoryScreen from './components/OpeningStoryScreen'
 import CollectionActivation from './components/CollectionActivation'
+import BoothActivation from './components/BoothActivation'
 import { Route, Routes } from 'react-router-dom'
 import DialoguePlayer from './components/DialoguePlayer'
 import SceneLayout from './components/SceneLayout'
@@ -51,6 +52,11 @@ function App() {
           }
         />
       ))}
+
+      <Route
+        path="/booth/:token"
+        element={<BoothActivation />}
+      />
 
       <Route
         path="/collect/:token"

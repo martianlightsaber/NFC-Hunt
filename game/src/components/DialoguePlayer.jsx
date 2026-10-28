@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import ChoiceList from './ChoiceList'
 import DialogueBox from './DialogueBox'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -37,6 +37,22 @@ function DialoguePlayer({ dialogue, missionId, wrapUpDialogue = [], collectible 
   const currentLine = activeDialogue[lineIndex]
   const isLastLine = lineIndex === activeDialogue.length - 1
 
+  useEffect(() => {
+    if (missionId) return
+
+    const isAtFinalBoothScreen =
+      currentLine?.type === 'final-instructions' && isLastLine
+
+    const gameState = loadGameState()
+
+    if (gameState.finalInstructionsActive !== isAtFinalBoothScreen) {
+      saveGameState({
+        ...gameState,
+        finalInstructionsActive: isAtFinalBoothScreen,
+      })
+    }
+  }, [missionId, currentLine?.type, isLastLine])
+
   function advanceDialogue() {
     const isMissionWrapUp = missionId && missionProgress.itemCollected
 
@@ -51,6 +67,19 @@ function DialoguePlayer({ dialogue, missionId, wrapUpDialogue = [], collectible 
       const nextProgress = {
         ...currentProgress,
         storyWrapped: true,
+      }
+
+      if (missionId === 'mission-6') {
+        saveGameState({
+          ...gameState,
+          activeMissionId: null,
+          missions: {
+            ...gameState.missions,
+            [missionId]: nextProgress,
+          },
+        })
+        setMissionProgress(nextProgress)
+        return
       }
 
       saveGameState({
@@ -98,6 +127,7 @@ function DialoguePlayer({ dialogue, missionId, wrapUpDialogue = [], collectible 
       saveGameState({
         ...gameState,
         completionInstructionsSeen: true,
+        finalInstructionsActive: false,
       })
     }
 
@@ -105,7 +135,10 @@ function DialoguePlayer({ dialogue, missionId, wrapUpDialogue = [], collectible 
   }
 
   function handleSceneTap(event) {
-    if (location.state?.collectionActivationWarning) return
+    if (
+      location.state?.collectionActivationWarning ||
+      location.state?.boothActivationWarning
+    ) return
     if (event.target.closest('button, a, input, textarea, select, [role="button"]')) return
     if (currentLine.choices) return
 
@@ -197,7 +230,9 @@ function DialoguePlayer({ dialogue, missionId, wrapUpDialogue = [], collectible 
       className="dialogue-player"
       onClick={handleSceneTap}
     >
-      {missionId && !missionProgress.storyWrapped && (
+      {missionId &&
+        missionId !== 'mission-6' &&
+        !missionProgress.storyWrapped && (
         <button
           className="mission-abandon-link"
           type="button"
@@ -206,7 +241,8 @@ function DialoguePlayer({ dialogue, missionId, wrapUpDialogue = [], collectible 
           ◀ Try a different mission
         </button>
       )}
-      {location.state?.collectionActivationWarning && (
+      {(location.state?.collectionActivationWarning ||
+        location.state?.boothActivationWarning) && (
         <div
           className="collection-warning"
           role="alertdialog"
@@ -221,7 +257,8 @@ function DialoguePlayer({ dialogue, missionId, wrapUpDialogue = [], collectible 
             ×
           </button>
           <p id="collection-warning-message">
-            {location.state.collectionActivationWarning}
+            {location.state.collectionActivationWarning ??
+              location.state.boothActivationWarning}
           </p>
         </div>
         )}

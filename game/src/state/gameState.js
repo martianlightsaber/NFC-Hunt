@@ -48,6 +48,7 @@ export function createInitialGameState() {
     mission6Unlocked: false,
     completionInstructionsSeen: false,
     finalInstructionsSeen: false,
+    finalInstructionsActive: false,
   }
 }
 
@@ -71,6 +72,7 @@ function isValidGameState(state) {
     typeof state.mission6Unlocked === 'boolean' &&
     typeof state.completionInstructionsSeen === 'boolean' &&
     typeof state.finalInstructionsSeen === 'boolean' &&
+    typeof state.finalInstructionsActive === 'boolean' &&
     ALL_MISSION_IDS.every((missionId) => {
       const mission = state.missions[missionId]
 
@@ -146,6 +148,15 @@ export function loadGameState() {
     parsedState.activeMissionId === undefined
   ) {
     parsedState.activeMissionId = null
+    migrated = true
+  }
+
+  if (
+    parsedState?.version === SAVE_VERSION &&
+    parsedState.finalInstructionsActive === undefined
+  ) {
+    parsedState.finalInstructionsActive =
+      parsedState.completionInstructionsSeen === true
     migrated = true
   }
 
