@@ -59,3 +59,54 @@
   max-width: 100%;
   white-space: nowrap;
 }
+
+.mission-abandon-link {
+  position: fixed;
+  top: max(0.75rem, env(safe-area-inset-top));
+  left: max(0.75rem, env(safe-area-inset-left));
+  z-index: 10;
+  padding: 0.5rem 0.75rem;
+  border: 0;
+  border-radius: 0.4rem;
+  color: #fff;
+  background: rgb(0 0 0 / 50%);
+  font: inherit;
+  cursor: pointer;
+}
+
+.final-soul-display {
+  position: fixed;
+  top: 12%;
+  left: 50%;
+  z-index: 3;
+  width: min(42vw, 12rem);
+  aspect-ratio: 1;
+  box-sizing: border-box;
+  border: 2px solid rgb(255 242 183 / 90%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 30%,
+    #fff9d6 0,
+    #ffe58a 18%,
+    #e8a82f 45%,
+    #a65324 72%,
+    rgb(84 35 25 / 85%) 100%
+  );
+  box-shadow:
+    0 0 1.2rem 0.6rem rgb(255 181 46 / 85%),
+    0 0 3rem 1rem rgb(255 107 53 / 55%);
+  pointer-events: none;
+  transform: translateX(-50%);
+  animation: final-soul-float 3s ease-in-out infinite;
+}
+
+@keyframes final-soul-float {
+  0%,
+  100% {
+    transform: translate(-50%, 0);
+  }
+
+  50% {
+    transform: translate(-50%, -10%);
+  }
+}

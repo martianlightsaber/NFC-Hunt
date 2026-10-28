@@ -30,20 +30,27 @@ function App() {
           element={<OpeningStoryScreen />}
       />
 
-      <Route
-        path="/mission-1"
-        element={
-          <SceneLayout backgroundImage="/images/moonlitgarden.jpg">
-            <DialoguePlayer
-              key="mission-1"
-              missionId="mission-1"
-              dialogue={missions['mission-1'].dialogue}
-              wrapUpDialogue={missions['mission-1'].wrapUpDialogue}
-              collectible={missions['mission-1'].collectible}
-            />
-          </SceneLayout>
-        }
-      />
+      {Object.entries(missions).map(([missionId, mission]) => (
+        <Route
+          key={missionId}
+          path={`/${missionId}`}
+          element={
+            <SceneLayout
+              backgroundImage={
+                mission.backgroundImage ?? '/images/moonlitgarden.jpg'
+              }
+            >
+              <DialoguePlayer
+                key={missionId}
+                missionId={missionId}
+                dialogue={mission.dialogue}
+                wrapUpDialogue={mission.wrapUpDialogue}
+                collectible={mission.collectible}
+              />
+            </SceneLayout>
+          }
+        />
+      ))}
 
       <Route
         path="/collect/:token"

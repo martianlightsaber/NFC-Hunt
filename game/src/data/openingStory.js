@@ -48,8 +48,52 @@ export const openingStory = [
 
 export function getOpeningStory(gameState) {
   const lastCompletedMissionId = gameState.lastCompletedMissionId
-
   const choices = getMissionChoices(gameState)
+
+  const completedCount = REQUIRED_MISSION_IDS.filter(
+    (missionId) => gameState.missions[missionId].storyWrapped,
+  ).length
+  const remainingCount = REQUIRED_MISSION_IDS.length - completedCount
+  const fragmentWord = remainingCount === 1 ? 'fragment' : 'fragments'
+
+  const finalInstructionsLine = {
+    type: 'final-instructions',
+    speaker: 'Bai Wuchang',
+    portrait: '/images/baiwuchang_pfp.png',
+    text: 'Bring the completed soul to the event booth for spiritual healing.',
+  }
+
+  if (completedCount === REQUIRED_MISSION_IDS.length) {
+    if (gameState.completionInstructionsSeen) {
+      return [finalInstructionsLine]
+    }
+
+    return [
+      {
+        speaker: 'Bai Wuchang',
+        portrait: '/images/baiwuchang_pfp.png',
+        text: 'Congratulations! You have collected all five spirit fragments!',
+      },
+      {
+        type: 'fragment-fusion',
+        collectibles: REQUIRED_MISSION_IDS.map(
+          (missionId) => missions[missionId].collectible,
+        ),
+      },
+      finalInstructionsLine,
+    ]
+  }
+
+  const remainingMissionsLine = {
+    speaker: 'Bai Wuchang',
+    portrait: '/images/baiwuchang_pfp.png',
+    text: `You still need ${remainingCount} more spirit ${fragmentWord}. Where would you like to search next?`,
+    choices,
+  }
+
+  if (gameState.activeMissionId) {
+    return [remainingMissionsLine]
+  }
 
   if (!lastCompletedMissionId) {
     return openingStory.map((line, index) =>
@@ -60,11 +104,6 @@ export function getOpeningStory(gameState) {
   }
 
   const completedMission = missions[lastCompletedMissionId]
-  const completedCount = REQUIRED_MISSION_IDS.filter(
-    (missionId) => gameState.missions[missionId].storyWrapped,
-  ).length
-  const remainingCount = REQUIRED_MISSION_IDS.length - completedCount
-  const fragmentWord = remainingCount === 1 ? 'fragment' : 'fragments'
 
   return [
     {
@@ -72,12 +111,6 @@ export function getOpeningStory(gameState) {
       portrait: '/images/baiwuchang_pfp.png',
       text: `Congratulations on completing ${completedMission.title}!`,
     },
-    {
-      speaker: 'Bai Wuchang',
-      portrait: '/images/baiwuchang_pfp.png',
-      text: `You still need ${remainingCount} more spirit ${fragmentWord}. Where would you like to search next?`,
-      choices,
-    },
+    remainingMissionsLine,
   ]
 }
-

@@ -9,42 +9,72 @@ function CollectionActivation() {
   const navigate = useNavigate()
   const [error, setError] = useState('')
 
-  useEffect(() => {
+    useEffect(() => {
     let cancelled = false
 
     Promise.resolve().then(() => {
       if (cancelled) return
 
       try {
+        const gameState = loadGameState()
         const missionId = MISSION_BY_COLLECTION_TOKEN[token]
+        const activeMissionId = gameState.activeMissionId
+        const activeProgress = activeMissionId
+          ? gameState.missions[activeMissionId]
+          : null
+
+        if (
+          activeMissionId &&
+          activeProgress &&
+          !activeProgress.storyWrapped &&
+          missionId !== activeMissionId
+        ) {
+          navigate(`/${activeMissionId}`, {
+            replace: true,
+            state: {
+              collectionActivationWarning: missionId
+                ? 'That is not the token for this mission.'
+                : 'This collection token is not recognized.',
+            },
+          })
+          return
+        }
 
         if (!missionId) {
           setError('This collection activation is not recognized.')
           return
         }
 
-        const gameState = loadGameState()
-        const missionProgress = gameState.missions[missionId]
-
-        if (!missionProgress) {
-          throw new Error(`Saved progress is missing for ${missionId}.`)
+        if (!activeMissionId || missionId !== activeMissionId) {
+          setError('Open the matching mission before scanning its token.')
+          return
         }
 
-        const mission = missions[missionId]
+        const missionProgress = gameState.missions[activeMissionId]
+        const mission = missions[activeMissionId]
+
+        if (!missionProgress) {
+          throw new Error(`Saved progress is missing for ${activeMissionId}.`)
+        }
 
         if (!mission?.dialogue?.length) {
-          throw new Error(`Mission dialogue is not configured for ${missionId}.`)
+          throw new Error(`Mission dialogue is not configured for ${activeMissionId}.`)
+        }
+
+        if (missionProgress.storyWrapped) {
+          setError('This mission has already been completed.')
+          return
         }
 
         if (missionProgress.itemCollected) {
-          navigate(`/${missionId}`, { replace: true })
+          navigate(`/${activeMissionId}`, { replace: true })
           return
         }
 
         const finalDialogueLineIndex = mission.dialogue.length - 1
 
         if (missionProgress.lineIndex !== finalDialogueLineIndex) {
-          navigate(`/${missionId}`, {
+          navigate(`/${activeMissionId}`, {
             replace: true,
             state: {
               collectionActivationWarning:
@@ -58,7 +88,7 @@ function CollectionActivation() {
           ...gameState,
           missions: {
             ...gameState.missions,
-            [missionId]: {
+            [activeMissionId]: {
               ...missionProgress,
               itemCollected: true,
               lineIndex: 0,
@@ -66,7 +96,7 @@ function CollectionActivation() {
           },
         })
 
-        navigate(`/${missionId}`, { replace: true })
+        navigate(`/${activeMissionId}`, { replace: true })
       } catch (activationError) {
         if (!cancelled) {
           setError(
@@ -91,9 +121,9 @@ function CollectionActivation() {
         <p role="alert">{error}</p>
         <button
           type="button"
-          onClick={() => navigate(missionId ? `/${missionId}` : '/opening')}
+          onClick={() => navigate('/opening')}
         >
-          {missionId ? 'Return to mission' : 'Return to opening'}
+          Return to opening
         </button>
       </div>
     )

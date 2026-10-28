@@ -1,0 +1,117 @@
+.fragment-fusion {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  overflow: hidden;
+  pointer-events: none;
+  color: #fff;
+  text-align: center;
+}
+
+.fragment-fusion.is-ready {
+  pointer-events: auto;
+  cursor: pointer;
+}
+
+.fragment-fusion__title {
+  position: absolute;
+  top: 12%;
+  left: 0;
+  width: 100%;
+  margin: 0;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+.fragment-fusion__stage {
+  position: absolute;
+  inset: 0;
+}
+
+.fragment-fusion__item {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  display: grid;
+  width: min(8rem, 27vw);
+  min-height: 3.5rem;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  place-items: center;
+  border: 1px solid #d4a830;
+  border-radius: 0.5rem;
+  color: #f0e6c8;
+  background: rgb(26 15 8 / 88%);
+  font-size: clamp(0.7rem, 3vw, 0.95rem);
+  transform: translate(
+    calc(-50% + var(--offset-x)),
+    calc(-50% + var(--offset-y))
+  );
+  animation: fragment-fuse 2.5s ease-in var(--delay) both;
+}
+
+.fragment-fusion__item img {
+  max-width: 100%;
+  max-height: 4rem;
+  object-fit: contain;
+}
+
+.fragment-fusion__core {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: min(7rem, 28vw);
+  aspect-ratio: 1;
+  border: 2px solid rgb(255 242 183 / 90%);
+  border-radius: 50%;
+  background: radial-gradient(
+    circle at 35% 30%,
+    #fff9d6 0,
+    #ffe58a 18%,
+    #e8a82f 45%,
+    #a65324 72%,
+    rgb(84 35 25 / 85%) 100%
+  );
+  box-shadow:
+    0 0 1.2rem 0.6rem rgb(255 181 46 / 85%),
+    0 0 3rem 1rem rgb(255 107 53 / 55%);
+  opacity: 0;
+  transform: translate(-50%, -50%) scale(0.2);
+  animation: fragment-fusion-core 0.8s ease-out 2.5s both;
+}
+
+.fragment-fusion__prompt {
+  position: absolute;
+  right: 0;
+  bottom: 12%;
+  left: 0;
+  min-height: 1.5em;
+  margin: 0;
+}
+
+@keyframes fragment-fuse {
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.08);
+  }
+}
+
+@keyframes fragment-fusion-core {
+  30% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fragment-fusion__item,
+  .fragment-fusion__core {
+    animation-duration: 1ms;
+    animation-delay: 0ms;
+  }
+}

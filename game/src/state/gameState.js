@@ -43,6 +43,7 @@ export function createInitialGameState() {
         },
       ]),
     ),
+    activeMissionId: null,
     lastCompletedMissionId: null,
     mission6Unlocked: false,
     completionInstructionsSeen: false,
@@ -61,6 +62,9 @@ function isValidGameState(state) {
     (state.ticketNumber === null || typeof state.ticketNumber === 'string') &&
     (state.playerName === null || typeof state.playerName === 'string') &&
     state.missions !== null &&
+    (state.activeMissionId === null ||
+      REQUIRED_MISSION_IDS.includes(state.activeMissionId) ||
+      state.activeMissionId === 'mission-6') &&
     (state.lastCompletedMissionId === null ||
     ALL_MISSION_IDS.includes(state.lastCompletedMissionId)) &&
     typeof state.missions === 'object' &&
@@ -134,6 +138,14 @@ export function loadGameState() {
     parsedState.lastCompletedMissionId === undefined
   ) {
     parsedState.lastCompletedMissionId = null
+    migrated = true
+  }
+
+  if (
+    parsedState?.version === SAVE_VERSION &&
+    parsedState.activeMissionId === undefined
+  ) {
+    parsedState.activeMissionId = null
     migrated = true
   }
 

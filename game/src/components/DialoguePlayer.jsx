@@ -4,6 +4,7 @@ import DialogueBox from './DialogueBox'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { loadGameState, saveGameState } from '../state/gameState'
 import CollectibleReveal from './CollectibleReveal'
+import FragmentFusionAnimation from './FragmentFusionAnimation'
 import './DialoguePlayer.css'
 
 function DialoguePlayer({ dialogue, missionId, wrapUpDialogue = [], collectible }) {
@@ -24,6 +25,10 @@ function DialoguePlayer({ dialogue, missionId, wrapUpDialogue = [], collectible 
 
   function dismissCollectionWarning() {
     navigate(location.pathname, { replace: true, state: null })
+  }
+
+  function abandonMission() {
+    navigate('/opening')
   }
 
   const activeDialogue =
@@ -50,6 +55,7 @@ function DialoguePlayer({ dialogue, missionId, wrapUpDialogue = [], collectible 
 
       saveGameState({
         ...gameState,
+        activeMissionId: null,
         lastCompletedMissionId: missionId,
         missions: {
           ...gameState.missions,
@@ -86,6 +92,15 @@ function DialoguePlayer({ dialogue, missionId, wrapUpDialogue = [], collectible 
       return
     }
 
+    if (!missionId && currentLine.type === 'fragment-fusion') {
+      const gameState = loadGameState()
+
+      saveGameState({
+        ...gameState,
+        completionInstructionsSeen: true,
+      })
+    }
+
     setOpeningLineIndex(nextLineIndex)
   }
 
@@ -104,12 +119,30 @@ function DialoguePlayer({ dialogue, missionId, wrapUpDialogue = [], collectible 
   }
 
   function handleChoiceSelect(choice) {
-    if (choice.id === 'mission-1') {
-      navigate('/mission-1')
-      return
+    const gameState = loadGameState()
+    const currentProgress = gameState.missions[choice.id]
+
+    if (!currentProgress) {
+      throw new Error(`Saved progress is missing for ${choice.id}.`)
     }
 
-    setSelectedChoice(choice)
+    if (currentProgress.storyWrapped) return
+
+    saveGameState({
+      ...gameState,
+      activeMissionId: choice.id,
+      missions: {
+        ...gameState.missions,
+        [choice.id]: {
+          ...currentProgress,
+          lineIndex: 0,
+          itemCollected: false,
+          collectionRevealSeen: false,
+        },
+      },
+    })
+
+    navigate(`/${choice.id}`)
   }
 
   function handleRevealContinue() {
@@ -150,11 +183,29 @@ function DialoguePlayer({ dialogue, missionId, wrapUpDialogue = [], collectible 
     )
   }
 
+  if (!missionId && currentLine.type === 'fragment-fusion') {
+    return (
+      <FragmentFusionAnimation
+        collectibles={currentLine.collectibles}
+        onComplete={advanceDialogue}
+      />
+    )
+  }
+
   return (
     <section
       className="dialogue-player"
       onClick={handleSceneTap}
     >
+      {missionId && !missionProgress.storyWrapped && (
+        <button
+          className="mission-abandon-link"
+          type="button"
+          onClick={abandonMission}
+        >
+          ◀ Try a different mission
+        </button>
+      )}
       {location.state?.collectionActivationWarning && (
         <div
           className="collection-warning"
@@ -174,10 +225,21 @@ function DialoguePlayer({ dialogue, missionId, wrapUpDialogue = [], collectible 
           </p>
         </div>
         )}
+      {!missionId && currentLine.type === 'final-instructions' && (
+        <div
+          className="final-soul-display"
+          role="img"
+          aria-label="The completed fused spirit soul"
+        />
+      )}
       <DialogueBox key={lineIndex} {...currentLine} />
 
       <div
-        className={`dialogue-continue-slot${currentLine.choices ? ' is-hidden' : ''}`}
+        className={`dialogue-continue-slot${
+          currentLine.choices || currentLine.type === 'final-instructions'
+            ? ' is-hidden'
+            : ''
+        }`}
       >
         <button
           type="button"

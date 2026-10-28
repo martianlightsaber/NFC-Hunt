@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import DialoguePlayer from './DialoguePlayer'
 import SceneLayout from './SceneLayout'
 import { getOpeningStory } from '../data/openingStory'
-import { loadGameState } from '../state/gameState'
+import { loadGameState, saveGameState } from '../state/gameState'
 
 function OpeningStoryScreen() {
   const [opening] = useState(() => {
@@ -13,6 +13,17 @@ function OpeningStoryScreen() {
       lastCompletedMissionId: gameState.lastCompletedMissionId,
     }
   })
+
+  useEffect(() => {
+    const gameState = loadGameState()
+
+    if (gameState.activeMissionId !== null) {
+      saveGameState({
+        ...gameState,
+        activeMissionId: null,
+      })
+    }
+  }, [])
 
   return (
     <SceneLayout backgroundImage="/images/foggyforest.jpg">
