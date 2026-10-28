@@ -15,6 +15,17 @@ const ALL_MISSION_IDS = [
   'mission-6',
 ]
 
+export function areRequiredMissionsComplete(gameState) {
+  return REQUIRED_MISSION_IDS.every((missionId) => {
+    const progress = gameState?.missions?.[missionId]
+
+    return (
+      progress?.itemCollected === true &&
+      progress?.storyWrapped === true
+    )
+  })
+}
+
 export function createInitialGameState() {
   return {
     version: SAVE_VERSION,
@@ -28,9 +39,11 @@ export function createInitialGameState() {
           lineIndex: 0,
           itemCollected: false,
           storyWrapped: false,
+          collectionRevealSeen: false,
         },
       ]),
     ),
+    lastCompletedMissionId: null,
     mission6Unlocked: false,
     completionInstructionsSeen: false,
     finalInstructionsSeen: false,
@@ -48,6 +61,8 @@ function isValidGameState(state) {
     (state.ticketNumber === null || typeof state.ticketNumber === 'string') &&
     (state.playerName === null || typeof state.playerName === 'string') &&
     state.missions !== null &&
+    (state.lastCompletedMissionId === null ||
+    ALL_MISSION_IDS.includes(state.lastCompletedMissionId)) &&
     typeof state.missions === 'object' &&
     typeof state.mission6Unlocked === 'boolean' &&
     typeof state.completionInstructionsSeen === 'boolean' &&
@@ -61,7 +76,8 @@ function isValidGameState(state) {
         Number.isInteger(mission.lineIndex) &&
         mission.lineIndex >= 0 &&
         typeof mission.itemCollected === 'boolean' &&
-        typeof mission.storyWrapped === 'boolean'
+        typeof mission.storyWrapped === 'boolean' &&
+        typeof mission.collectionRevealSeen === 'boolean' 
       )
     })
   )
@@ -95,6 +111,29 @@ export function loadGameState() {
     parsedState.playerName === undefined
   ) {
     parsedState.playerName = null
+    migrated = true
+  }
+
+  if (parsedState?.version === SAVE_VERSION && parsedState.missions) {
+    for (const missionId of ALL_MISSION_IDS) {
+      const mission = parsedState.missions[missionId]
+
+      if (
+        mission &&
+        typeof mission === 'object' &&
+        mission.collectionRevealSeen === undefined
+      ) {
+        mission.collectionRevealSeen = false
+        migrated = true
+      }
+    }
+  }
+
+  if (
+    parsedState?.version === SAVE_VERSION &&
+    parsedState.lastCompletedMissionId === undefined
+  ) {
+    parsedState.lastCompletedMissionId = null
     migrated = true
   }
 

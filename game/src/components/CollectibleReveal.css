@@ -1,0 +1,67 @@
+.collectible-reveal {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+  box-sizing: border-box;
+  padding:
+    max(1.5rem, env(safe-area-inset-top))
+    max(1.5rem, env(safe-area-inset-right))
+    max(1.5rem, env(safe-area-inset-bottom))
+    max(1.5rem, env(safe-area-inset-left));
+  text-align: center;
+}
+
+.collectible-reveal.is-ready {
+  cursor: pointer;
+}
+
+.collectible-reveal__prompt {
+  min-height: 1.5em;
+}
+
+.collectible-reveal__stamp {
+  display: grid;
+  place-items: center;
+  width: min(18rem, 70vw);
+  min-height: 12rem;
+  padding: 1rem;
+  border: 2px solid #d4a830;
+  color: #f0e6c8;
+  background: rgba(26, 15, 8, 0.8);
+  animation: collectible-settle 2.2s ease-out both;
+}
+
+.collectible-reveal__stamp img {
+  display: block;
+  max-width: 100%;
+  max-height: 16rem;
+  object-fit: contain;
+}
+
+@keyframes collectible-settle {
+  0% {
+    filter: brightness(2.2) drop-shadow(0 0 1.5rem #ff6b35);
+    transform: scale(1.08);
+  }
+
+  45% {
+    filter: brightness(1.5) drop-shadow(0 0 0.8rem #ff6b35);
+    transform: scale(1.02);
+  }
+
+  100% {
+    filter: none;
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .collectible-reveal__stamp {
+    animation-duration: 1ms;
+  }
+}

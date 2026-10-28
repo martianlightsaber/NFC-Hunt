@@ -24,21 +24,33 @@ function WelcomeScreen() {
   const spielComplete = isLastLine && visibleText === currentLine
 
   useEffect(() => {
-    try {
-      const gameState = loadGameState()
-  
-      if (gameState.ticketNumber) {
-        navigate('/opening', { replace: true })
-        return
+    let cancelled = false
+
+    Promise.resolve().then(() => {
+      if (cancelled) return
+
+      try {
+        const gameState = loadGameState()
+
+        if (gameState.ticketNumber) {
+          navigate('/opening', { replace: true })
+          return
+        }
+
+        setPlayerName(gameState.playerName ?? '')
+      } catch (loadError) {
+        if (!cancelled) {
+          setError(
+            loadError instanceof Error
+              ? loadError.message
+              : 'Unable to load your saved game.',
+          )
+        }
       }
-  
-      setPlayerName(gameState.playerName ?? '')
-    } catch (loadError) {
-      setError(
-        loadError instanceof Error
-          ? loadError.message
-          : 'Unable to load your saved game.',
-      )
+    })
+
+    return () => {
+      cancelled = true
     }
   }, [navigate])
 

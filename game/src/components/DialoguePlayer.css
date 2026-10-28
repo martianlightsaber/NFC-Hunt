@@ -1,0 +1,61 @@
+.collection-warning {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 20;
+  width: min(88vw, 26rem);
+  padding: 2rem 2.5rem 1.5rem;
+  transform: translate(-50%, -50%);
+  border: 1px solid rgb(255 255 255 / 16%);
+  border-radius: 14px;
+  color: #fff;
+  background: rgb(48 48 48 / 88%);
+  box-shadow: 0 12px 40px rgb(0 0 0 / 35%);
+  text-align: center;
+  backdrop-filter: blur(6px);
+}
+
+.collection-warning p {
+  margin: 0;
+  line-height: 1.5;
+}
+
+.collection-warning__close {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.55rem;
+  padding: 0.1rem 0.4rem;
+  border: 0;
+  color: #fff;
+  background: transparent;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.dialogue-player {
+  position: fixed;
+  inset: 0;
+  z-index: 1;
+}
+
+.dialogue-continue-slot {
+  position: absolute;
+  bottom: max(0.25rem, env(safe-area-inset-bottom));
+  left: 50%;
+  display: grid;
+  width: min(90vw, 480px);
+  height: clamp(2.75rem, 7svh, 3.25rem);
+  place-items: center;
+  transform: translateX(-50%);
+}
+
+.dialogue-continue-slot.is-hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.dialogue-continue-slot button {
+  max-width: 100%;
+  white-space: nowrap;
+}

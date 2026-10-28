@@ -7,6 +7,7 @@ function ChoiceList({ choices, onSelect }) {
         <button
           key={choice.id}
           type="button"
+          disabled={choice.disabled}
           onClick={() => onSelect(choice)}
         >
           {choice.label}

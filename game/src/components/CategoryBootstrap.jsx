@@ -13,24 +13,36 @@ function CategoryBootstrap() {
   const [error, setError] = useState('')
 
   useEffect(() => {
-    const category = CATEGORY_BY_TOKEN[token]
-    if (category !== 'regular' && category !== 'add-on') {
-      navigate('/', { replace: true })
-      return
-    }
+    let cancelled = false
 
-    try {
-      const gameState = loadGameState()
-      if (gameState.playerCategory === null) {
-        saveGameState({ ...gameState, playerCategory: category })
+    Promise.resolve().then(() => {
+      if (cancelled) return
+
+      const category = CATEGORY_BY_TOKEN[token]
+      if (category !== 'regular' && category !== 'add-on') {
+        navigate('/', { replace: true })
+        return
       }
-      navigate('/', { replace: true })
-    } catch (error) {
-      setError(
-        error instanceof Error
-          ? error.message
-          : 'Unable to save the player category.',
-      )
+
+      try {
+        const gameState = loadGameState()
+        if (gameState.playerCategory === null) {
+          saveGameState({ ...gameState, playerCategory: category })
+        }
+        navigate('/', { replace: true })
+      } catch (error) {
+        if (!cancelled) {
+          setError(
+            error instanceof Error
+              ? error.message
+              : 'Unable to save the player category.',
+          )
+        }
+      }
+    })
+
+    return () => {
+      cancelled = true
     }
   }, [token, navigate])
 
