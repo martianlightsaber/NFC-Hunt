@@ -1,17 +1,18 @@
 import './App.css'
-import WelcomeScreen from './components/WelcomeScreen'
+//import WelcomeScreen from './components/WelcomeScreen'
 import OpeningStoryScreen from './components/OpeningStoryScreen'
 import { Route, Routes } from 'react-router-dom'
 import { missions } from './data/missions'
 import NfcTokenActivation from './components/NfcTokenActivation'
 import MissionRoute from './components/MissionRoute'
+import GhostWelcomeScreen from './components/GhostWelcomeScreen'
 
 function App() {
   return (
     <Routes>
       <Route
         path="/"
-        element={<WelcomeScreen />}
+        element={<GhostWelcomeScreen />}
         //element={
         //  <SceneLayout backgroundImage="/images/foggyforest.jpg">
         //    <DialoguePlayer key="opening" dialogue={openingStory} />
