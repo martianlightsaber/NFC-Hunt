@@ -1,4 +1,6 @@
+// >>> REPLACE ENTIRE FILE: game/src/components/CollectibleReveal.jsx
 import { useState } from 'react'
+import TokenWarning from './TokenWarning'
 import './CollectibleReveal.css'
 
 function CollectibleReveal({ collectible, onContinue }) {
@@ -42,8 +44,11 @@ function CollectibleReveal({ collectible, onContinue }) {
       <p className="collectible-reveal__prompt" aria-live="polite">
         {animationComplete ? 'Tap anywhere to continue' : ' '}
       </p>
+
+      <TokenWarning />
     </section>
   )
 }
 
 export default CollectibleReveal
+// <<< END REPLACEMENT

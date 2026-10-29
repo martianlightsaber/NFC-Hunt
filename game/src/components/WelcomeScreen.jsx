@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import './WelcomeScreen.css'
-import { useNavigate } from 'react-router-dom'
+import './DialoguePlayer.css'
+import TokenWarning from './TokenWarning'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { VALID_TICKET_NUMBERS } from '../data/validTickets'
 import { loadGameState, saveGameState } from '../state/gameState'
 
@@ -17,6 +19,7 @@ function WelcomeScreen() {
   const [ticketNumber, setTicketNumber] = useState('')
   const [playerName, setPlayerName] = useState('')
   const navigate = useNavigate()
+  const location = useLocation()
   const [error, setError] = useState('')
 
   const currentLine = dialogueLines[lineIndex]
@@ -32,12 +35,13 @@ function WelcomeScreen() {
       try {
         const gameState = loadGameState()
 
-        if (gameState.ticketNumber) {
+        if (gameState.ticketNumber && gameState.playerCategory !== null) {
           navigate('/opening', { replace: true })
           return
         }
 
         setPlayerName(gameState.playerName ?? '')
+        setTicketNumber(gameState.ticketNumber ?? '')
       } catch (loadError) {
         if (!cancelled) {
           setError(
@@ -55,6 +59,7 @@ function WelcomeScreen() {
   }, [navigate])
 
   useEffect(() => {
+    if (location.state?.tokenActivationWarning) return undefined
     if (visibleText.length >= currentLine.length) {
       return undefined
     }
@@ -64,9 +69,10 @@ function WelcomeScreen() {
     }, 50)
 
     return () => window.clearTimeout(timer)
-  }, [currentLine, visibleText])
+  }, [currentLine, visibleText, location.state?.tokenActivationWarning])
 
   function handleAdvance() {
+    if (location.state?.tokenActivationWarning) return
     if (visibleText !== currentLine) {
       setVisibleText(currentLine)
       return
@@ -97,6 +103,10 @@ function WelcomeScreen() {
   
     try {
       const gameState = loadGameState()
+      if (gameState.playerCategory === null) {
+        setError('Please scan the QR code on your doorgift talisman before entering.')
+        return
+      }
       saveGameState({
         ...gameState,
         playerName: normalizedName,
@@ -176,6 +186,7 @@ function WelcomeScreen() {
           </form>
         )}
       </div>
+      <TokenWarning />
     </main>
   )
 }

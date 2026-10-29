@@ -1,21 +1,14 @@
 import './App.css'
-import CategoryBootstrap from './components/CategoryBootstrap'
 import WelcomeScreen from './components/WelcomeScreen'
 import OpeningStoryScreen from './components/OpeningStoryScreen'
-import CollectionActivation from './components/CollectionActivation'
-import BoothActivation from './components/BoothActivation'
 import { Route, Routes } from 'react-router-dom'
-import DialoguePlayer from './components/DialoguePlayer'
-import SceneLayout from './components/SceneLayout'
 import { missions } from './data/missions'
+import NfcTokenActivation from './components/NfcTokenActivation'
+import MissionRoute from './components/MissionRoute'
 
 function App() {
   return (
     <Routes>
-      <Route
-        path="/bootstrap/:token"
-        element={<CategoryBootstrap />}
-      />
       <Route
         path="/"
         element={<WelcomeScreen />}
@@ -36,31 +29,27 @@ function App() {
           key={missionId}
           path={`/${missionId}`}
           element={
-            <SceneLayout
-              backgroundImage={
-                mission.backgroundImage ?? '/images/moonlitgarden.jpg'
-              }
-            >
-              <DialoguePlayer
-                key={missionId}
-                missionId={missionId}
-                dialogue={mission.dialogue}
-                wrapUpDialogue={mission.wrapUpDialogue}
-                collectible={mission.collectible}
-              />
-            </SceneLayout>
+            <MissionRoute
+              missionId={missionId}
+              mission={mission}
+            />
           }
         />
       ))}
 
       <Route
         path="/booth/:token"
-        element={<BoothActivation />}
+        element={<NfcTokenActivation routeKind="booth" />}
       />
 
       <Route
         path="/collect/:token"
-        element={<CollectionActivation />}
+        element={<NfcTokenActivation routeKind="collect" />}
+      />
+
+      <Route
+        path="/bootstrap/:token"
+        element={<NfcTokenActivation routeKind="bootstrap" />}
       />
     </Routes>
   )

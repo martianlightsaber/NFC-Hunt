@@ -1,19 +1,23 @@
+// >>> REPLACE ENTIRE FILE: game/src/state/gameState.js
+import {
+  MISSION_IDS,
+  REQUIRED_MISSION_IDS,
+  missions,
+} from '../data/missions'
+
 const STORAGE_KEY = 'nfc-hunt-save'
-const SAVE_VERSION = 1
+const SAVE_VERSION = 4
 
-export const REQUIRED_MISSION_IDS = [
-  'mission-1',
-  'mission-2',
-  'mission-3',
-  'mission-4',
-  'mission-5',
-]
+const OPENING_CURSOR_PHASES = new Set([
+  'opening-introduction',
+  'mission-selection',
+  'mission-congratulations',
+  'five-mission-ending',
+  'five-mission-booth',
+  'mission-6-terminal',
+])
 
-const ALL_MISSION_IDS = [
-  'opening',
-  ...REQUIRED_MISSION_IDS,
-  'mission-6',
-]
+export { REQUIRED_MISSION_IDS }
 
 export function areRequiredMissionsComplete(gameState) {
   return REQUIRED_MISSION_IDS.every((missionId) => {
@@ -26,6 +30,15 @@ export function areRequiredMissionsComplete(gameState) {
   })
 }
 
+function createMissionProgress() {
+  return {
+    collectionScanReady: false,
+    itemCollected: false,
+    storyWrapped: false,
+    collectionRevealSeen: false,
+  }
+}
+
 export function createInitialGameState() {
   return {
     version: SAVE_VERSION,
@@ -33,14 +46,9 @@ export function createInitialGameState() {
     ticketNumber: null,
     playerName: null,
     missions: Object.fromEntries(
-      ALL_MISSION_IDS.map((missionId) => [
+      MISSION_IDS.map((missionId) => [
         missionId,
-        {
-          lineIndex: 0,
-          itemCollected: false,
-          storyWrapped: false,
-          collectionRevealSeen: false,
-        },
+        createMissionProgress(),
       ]),
     ),
     activeMissionId: null,
@@ -49,6 +57,108 @@ export function createInitialGameState() {
     completionInstructionsSeen: false,
     finalInstructionsSeen: false,
     finalInstructionsActive: false,
+    dialogueCursor: null,
+    pendingMissionCongratulationsId: null,
+    openingIntroSeen: false,
+  }
+}
+
+function isValidDialogueCursor(cursor) {
+  if (cursor === null) return true
+
+  if (
+    cursor === null ||
+    typeof cursor !== 'object' ||
+    !Number.isInteger(cursor.lineIndex) ||
+    cursor.lineIndex < 0
+  ) {
+    return false
+  }
+
+  if (cursor.screen === 'opening') {
+    return OPENING_CURSOR_PHASES.has(cursor.phase)
+  }
+
+  if (cursor.screen === 'mission') {
+    return (
+      MISSION_IDS.includes(cursor.missionId) &&
+      ['mission', 'wrap-up', 'mission-6-ending'].includes(cursor.phase)
+    )
+  }
+
+  return false
+}
+
+function migrateLegacyState(state) {
+  if (
+    state === null ||
+    typeof state !== 'object' ||
+    ![1, 2, 3].includes(state.version)
+  ) {
+    return state
+  }
+
+  const migratedMissions = Object.fromEntries(
+    MISSION_IDS.map((missionId) => {
+      const previous = state.missions?.[missionId] ?? {}
+      const scanPromptIndex =
+        missions[missionId].dialogue.findIndex(
+          (line) => line.type === 'scan-prompt',
+        )
+      const wasAtLegacyScanPrompt =
+        state.version === 1 &&
+        state.activeMissionId === missionId &&
+        previous.lineIndex === scanPromptIndex
+
+      return [
+        missionId,
+        {
+          collectionScanReady:
+            previous.collectionScanReady === true ||
+            (wasAtLegacyScanPrompt &&
+              previous.itemCollected !== true &&
+              previous.storyWrapped !== true),
+          itemCollected: previous.itemCollected === true,
+          storyWrapped: previous.storyWrapped === true,
+          collectionRevealSeen:
+            previous.collectionRevealSeen === true,
+        },
+      ]
+    }),
+  )
+
+  const hasCompletedMission = Object.values(migratedMissions).some(
+    (progress) => progress.storyWrapped,
+  )
+
+  return {
+    ...createInitialGameState(),
+    ...state,
+    version: SAVE_VERSION,
+    missions: migratedMissions,
+    activeMissionId: MISSION_IDS.includes(state.activeMissionId)
+      ? state.activeMissionId
+      : null,
+    lastCompletedMissionId: MISSION_IDS.includes(
+      state.lastCompletedMissionId,
+    )
+      ? state.lastCompletedMissionId
+      : null,
+    mission6Unlocked: state.mission6Unlocked === true,
+    completionInstructionsSeen:
+      state.completionInstructionsSeen === true,
+    finalInstructionsSeen: state.finalInstructionsSeen === true,
+    finalInstructionsActive: state.finalInstructionsActive === true,
+    dialogueCursor: null,
+    pendingMissionCongratulationsId: null,
+    openingIntroSeen:
+      typeof state.openingIntroSeen === 'boolean'
+        ? state.openingIntroSeen
+        : Boolean(
+            state.activeMissionId ||
+              state.lastCompletedMissionId ||
+              hasCompletedMission,
+          ),
   }
 }
 
@@ -63,27 +173,29 @@ function isValidGameState(state) {
     (state.ticketNumber === null || typeof state.ticketNumber === 'string') &&
     (state.playerName === null || typeof state.playerName === 'string') &&
     state.missions !== null &&
-    (state.activeMissionId === null ||
-      REQUIRED_MISSION_IDS.includes(state.activeMissionId) ||
-      state.activeMissionId === 'mission-6') &&
-    (state.lastCompletedMissionId === null ||
-    ALL_MISSION_IDS.includes(state.lastCompletedMissionId)) &&
     typeof state.missions === 'object' &&
+    (state.activeMissionId === null ||
+      MISSION_IDS.includes(state.activeMissionId)) &&
+    (state.lastCompletedMissionId === null ||
+      MISSION_IDS.includes(state.lastCompletedMissionId)) &&
+    (state.pendingMissionCongratulationsId === null ||
+      MISSION_IDS.includes(state.pendingMissionCongratulationsId)) &&
     typeof state.mission6Unlocked === 'boolean' &&
     typeof state.completionInstructionsSeen === 'boolean' &&
     typeof state.finalInstructionsSeen === 'boolean' &&
     typeof state.finalInstructionsActive === 'boolean' &&
-    ALL_MISSION_IDS.every((missionId) => {
-      const mission = state.missions[missionId]
+    typeof state.openingIntroSeen === 'boolean' &&
+    isValidDialogueCursor(state.dialogueCursor) &&
+    MISSION_IDS.every((missionId) => {
+      const progress = state.missions[missionId]
 
       return (
-        mission !== null &&
-        typeof mission === 'object' &&
-        Number.isInteger(mission.lineIndex) &&
-        mission.lineIndex >= 0 &&
-        typeof mission.itemCollected === 'boolean' &&
-        typeof mission.storyWrapped === 'boolean' &&
-        typeof mission.collectionRevealSeen === 'boolean' 
+        progress !== null &&
+        typeof progress === 'object' &&
+        typeof progress.collectionScanReady === 'boolean' &&
+        typeof progress.itemCollected === 'boolean' &&
+        typeof progress.storyWrapped === 'boolean' &&
+        typeof progress.collectionRevealSeen === 'boolean'
       )
     })
   )
@@ -97,80 +209,22 @@ export function loadGameState() {
   }
 
   const parsedState = JSON.parse(savedState)
-  let migrated = false
+  const gameState =
+    parsedState?.version === SAVE_VERSION
+      ? parsedState
+      : migrateLegacyState(parsedState)
 
-  if (
-    parsedState?.version === SAVE_VERSION &&
-    parsedState.missions &&
-    !parsedState.missions.opening
-  ) {
-    parsedState.missions.opening = {
-      lineIndex: 0,
-      itemCollected: false,
-      storyWrapped: false,
-    }
-    migrated = true
-  }
-
-  if (
-    parsedState?.version === SAVE_VERSION &&
-    parsedState.playerName === undefined
-  ) {
-    parsedState.playerName = null
-    migrated = true
-  }
-
-  if (parsedState?.version === SAVE_VERSION && parsedState.missions) {
-    for (const missionId of ALL_MISSION_IDS) {
-      const mission = parsedState.missions[missionId]
-
-      if (
-        mission &&
-        typeof mission === 'object' &&
-        mission.collectionRevealSeen === undefined
-      ) {
-        mission.collectionRevealSeen = false
-        migrated = true
-      }
-    }
-  }
-
-  if (
-    parsedState?.version === SAVE_VERSION &&
-    parsedState.lastCompletedMissionId === undefined
-  ) {
-    parsedState.lastCompletedMissionId = null
-    migrated = true
-  }
-
-  if (
-    parsedState?.version === SAVE_VERSION &&
-    parsedState.activeMissionId === undefined
-  ) {
-    parsedState.activeMissionId = null
-    migrated = true
-  }
-
-  if (
-    parsedState?.version === SAVE_VERSION &&
-    parsedState.finalInstructionsActive === undefined
-  ) {
-    parsedState.finalInstructionsActive =
-      parsedState.completionInstructionsSeen === true
-    migrated = true
-  }
-
-  if (!isValidGameState(parsedState)) {
+  if (!isValidGameState(gameState)) {
     throw new Error(
       'The saved game data is invalid or from an unsupported version.',
     )
   }
 
-  if (migrated) {
-    saveGameState(parsedState)
+  if (gameState !== parsedState) {
+    saveGameState(gameState)
   }
 
-  return parsedState
+  return gameState
 }
 
 export function saveGameState(state) {
@@ -184,3 +238,4 @@ export function saveGameState(state) {
 export function clearGameState() {
   window.localStorage.removeItem(STORAGE_KEY)
 }
+// <<< END REPLACEMENT
