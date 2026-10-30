@@ -1,4 +1,5 @@
 export const VALID_TICKET_NUMBERS = [
+    'TEAMCAFE',
     'SAZS5R',
     'QMXKUP',
     'C428S5',

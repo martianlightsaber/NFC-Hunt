@@ -4,7 +4,6 @@ import {
   REQUIRED_MISSION_IDS,
 } from './missions'
 
-const BAI_WUCHANG_PORTRAIT = '/images/baiwuchang_pfp.png'
 const MOS_OFFICER_PORTRAIT = '/images/mos-officer.png'
 
 function getMissionChoices(gameState) {
@@ -25,7 +24,7 @@ const openingStoryBeforeChoices = [
   ],
   },
   {text: [
-    {text: 'What is this floating flame?', italic: true},
+    {text: 'What is this floating sprite?', italic: true},
   ],
   },
   {
@@ -148,13 +147,18 @@ function createFiveMissionEnding() {
     {
       speaker: 'MOS Officer',
       portrait: MOS_OFFICER_PORTRAIT,
-      text: 'The completed soul feels whole and steady at last.',
+      text: 'The Soulhunter is processing the soul fusion.',
+    },
+    {
+      speaker: 'MOS Officer',
+      portrait: MOS_OFFICER_PORTRAIT,
+      text: 'Approach the spiritual healers to ensure your soul heals with balance.',
     },
     {
       type: 'final-instructions',
       speaker: 'MOS Officer',
       portrait: MOS_OFFICER_PORTRAIT,
-      text: 'Approach the spiritual healers at the booth to ensure your soul is complete.',
+      text: '(Go to the Event Prize Booth)',
     },
   ]
 }
