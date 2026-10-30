@@ -1,0 +1,162 @@
+.ghost-opening-story:not(.is-ghost-opening-ready) .textbox-container,
+.ghost-opening-story:not(.is-ghost-opening-ready) .dialogue-continue-slot {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.ghost-opening-blink {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  overflow: hidden;
+  pointer-events: auto;
+  filter: blur(8px);
+}
+
+.ghost-opening-blink__upper,
+.ghost-opening-blink__lower {
+  position: absolute;
+  left: -5vw;
+  width: 110vw;
+  height: 56vh;
+  background: #000;
+  filter: blur(10px);
+  will-change: transform;
+}
+
+.ghost-opening-blink__upper {
+  top: -4vh;
+  clip-path: polygon(
+    0 0,
+    100% 0,
+    100% 88%,
+    85% 85%,
+    70% 81%,
+    50% 78%,
+    30% 81%,
+    15% 85%,
+    0 88%
+  );
+}
+
+.ghost-opening-blink__lower {
+  bottom: -4vh;
+  clip-path: polygon(
+    0 12%,
+    15% 15%,
+    30% 19%,
+    50% 22%,
+    70% 19%,
+    85% 15%,
+    100% 12%,
+    100% 100%,
+    0 100%
+  );
+}
+
+.ghost-opening-blink.is-blinking .ghost-opening-blink__upper {
+  animation: ghost-opening-blink-upper 5.8s ease-in-out both;
+}
+
+.ghost-opening-blink.is-blinking .ghost-opening-blink__lower {
+  animation: ghost-opening-blink-lower 5.8s ease-in-out both;
+}
+
+@keyframes ghost-opening-blink-upper {
+  0%,
+  10%,
+  66%,
+  94% {
+    transform: translateY(0);
+  }
+
+  40%,
+  57%,
+  75%,
+  88%,
+  100% {
+    transform: translateY(-110%);
+  }
+}
+
+@keyframes ghost-opening-blink-lower {
+  0%,
+  10%,
+  66%,
+  94% {
+    transform: translateY(0);
+  }
+
+  40%,
+  57%,
+  75%,
+  88%,
+  100% {
+    transform: translateY(110%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ghost-opening-blink.is-blinking .ghost-opening-blink__upper,
+  .ghost-opening-blink.is-blinking .ghost-opening-blink__lower {
+    animation-duration: 1ms;
+  }
+}
+
+.ghost-opening-story .textbox-container {
+  width: min(96vw, 560px);
+  aspect-ratio: 922 / 361;
+  background-image: url('/images/textbox2.png');
+  font-family: "Book Antiqua", "Palatino Linotype", Palatino, Georgia, serif;
+  letter-spacing: 0.025em;
+}
+
+.ghost-opening-story .textbox-container .textbox-inner {
+  top: 25%;
+  bottom: 25%;
+  padding-left: 0.7rem;
+}
+
+.ghost-opening-sprite {
+  position: fixed;
+  top: max(15rem, env(safe-area-inset-top));
+  left: 50%;
+  z-index: 5;
+  width: min(34vw, 9rem);
+  max-height: 28vh;
+  object-fit: contain;
+  pointer-events: none;
+  transform: translateX(-50%);
+  animation: ghost-opening-sprite-float 3s ease-in-out infinite;
+}
+
+@keyframes ghost-opening-sprite-float {
+  0%,
+  100% {
+    transform: translate(-50%, 0);
+  }
+
+  50% {
+    transform: translate(-50%, -8px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ghost-opening-sprite {
+    animation: none;
+  }
+}
+
+.ghost-opening-story .dialogue-text {
+  text-align: left;
+}
+
+.ghost-opening-story .choice-list button {
+  font-family: "Book Antiqua", "Palatino Linotype", Palatino, Georgia, serif;
+  font-size: clamp(1rem, 3vw, 1.35rem);
+  font-weight: 600;
+}
+
+.ghost-opening-story:has(.collection-warning-backdrop) .scene-layout {
+  z-index: 6;
+}

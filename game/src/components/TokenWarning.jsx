@@ -10,6 +10,9 @@ function TokenWarning() {
     location.state?.collectionActivationWarning ??
     location.state?.boothActivationWarning
   const [warningMessage, setWarningMessage] = useState(warningFromLocation)
+  const [activationDiagnostic] = useState(
+  () => window.localStorage.getItem('nfc-hunt-activation-diagnostic'),
+)
 
   useEffect(() => {
     if (!warningFromLocation) return
@@ -55,6 +58,23 @@ function TokenWarning() {
           ×
         </button>
         <p id="token-warning-message">{warningMessage}</p>
+        {activationDiagnostic && (
+  <details>
+    <summary>Temporary scan diagnostics</summary>
+    <pre
+      style={{
+        maxHeight: '30vh',
+        overflow: 'auto',
+        whiteSpace: 'pre-wrap',
+        overflowWrap: 'anywhere',
+        textAlign: 'left',
+        fontSize: '0.7rem',
+      }}
+    >
+      {activationDiagnostic}
+    </pre>
+  </details>
+)}
       </div>
     </div>
   )

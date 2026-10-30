@@ -1,48 +1,68 @@
-// >>> REPLACE ENTIRE FILE: game/src/components/CollectibleReveal.jsx
 import { useState } from 'react'
 import TokenWarning from './TokenWarning'
 import './CollectibleReveal.css'
 
 function CollectibleReveal({ collectible, onContinue }) {
   const [animationComplete, setAnimationComplete] = useState(false)
+  const [isExiting, setIsExiting] = useState(false)
+
+  function handleDismiss() {
+    if (!animationComplete || isExiting) return
+    setIsExiting(true)
+  }
 
   function handleKeyDown(event) {
     if (
       animationComplete &&
+      !isExiting &&
       (event.key === 'Enter' || event.key === ' ')
     ) {
       event.preventDefault()
+      handleDismiss()
+    }
+  }
+
+  function handleStampAnimationEnd(event) {
+    if (event.target !== event.currentTarget) return
+
+    if (event.animationName === 'collectible-settle') {
+      setAnimationComplete(true)
+    } else if (event.animationName === 'collectible-exit') {
       onContinue()
     }
   }
 
   return (
     <section
-      className={`collectible-reveal${animationComplete ? ' is-ready' : ''}`}
-      aria-labelledby="collectible-reveal-title"
-      onClick={animationComplete ? onContinue : undefined}
+      className={`collectible-reveal${animationComplete ? ' is-ready' : ''}${isExiting ? ' is-exiting' : ''}`}
+      onClick={animationComplete && !isExiting ? handleDismiss : undefined}
       onKeyDown={handleKeyDown}
       role={animationComplete ? 'button' : undefined}
-      tabIndex={animationComplete ? 0 : undefined}
-      aria-label={animationComplete ? 'Continue to mission story' : undefined}
+      tabIndex={animationComplete && !isExiting ? 0 : undefined}
+      aria-label={
+        animationComplete ? 'Continue to mission story' : collectible.name
+      }
     >
-      <h2 id="collectible-reveal-title">Item collected</h2>
-
       <div
         className="collectible-reveal__stamp"
         role="status"
         aria-live="polite"
-        onAnimationEnd={() => setAnimationComplete(true)}
+        onAnimationEnd={handleStampAnimationEnd}
       >
         {collectible.image ? (
-          <img src={collectible.image} alt={collectible.name} />
+          <img
+            src={`${import.meta.env.BASE_URL}${collectible.image.replace(/^\/+/, '')}`}
+            alt={collectible.name}
+          />
         ) : (
           <span>{collectible.name}</span>
         )}
       </div>
 
       <p className="collectible-reveal__prompt" aria-live="polite">
-        {animationComplete ? 'Tap anywhere to continue' : ' '}
+        {animationComplete && !isExiting
+          ? 'Tap anywhere to continue'
+          : ' '}
       </p>
 
       <TokenWarning />
@@ -51,4 +71,3 @@ function CollectibleReveal({ collectible, onContinue }) {
 }
 
 export default CollectibleReveal
-// <<< END REPLACEMENT

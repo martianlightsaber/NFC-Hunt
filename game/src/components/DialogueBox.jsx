@@ -1,4 +1,5 @@
 import './DialogueBox.css'
+import { Fragment } from 'react'
 
 function assetUrl(path) {
   return `${import.meta.env.BASE_URL}${path.replace(/^\/+/, '')}`
@@ -29,7 +30,18 @@ function DialogueBox({ text, speaker, portrait }) {
       )}
 
       <div className="textbox-inner">
-        <p className="dialogue-text">{text}</p>
+        <p className="dialogue-text">
+          {typeof text === 'string'
+            ? text
+            : text.map((part, index) => {
+                let content = part.text
+
+                if (part.italic) content = <em>{content}</em>
+                if (part.bold) content = <strong>{content}</strong>
+
+                return <Fragment key={index}>{content}</Fragment>
+              })}
+        </p>
       </div>
     </section>
   )

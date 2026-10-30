@@ -1,0 +1,107 @@
+.ghost-mission-story .textbox-container {
+  width: min(96vw, 560px);
+  aspect-ratio: 922 / 361;
+  background-image: url('/images/textbox2.png');
+  font-family: "Book Antiqua", "Palatino Linotype", Palatino, Georgia, serif;
+  letter-spacing: 0.025em;
+}
+
+.ghost-mission-story .textbox-container .textbox-inner {
+  top: 25%;
+  bottom: 25%;
+  padding-left: 0.7rem;
+}
+
+.ghost-mission-story .dialogue-text {
+  text-align: left;
+}
+
+.ghost-mission-center-image-position {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  z-index: 3;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+.ghost-mission-center-image-float {
+  animation: ghost-mission-image-float 4s ease-in-out infinite;
+}
+
+.ghost-mission-center-image {
+  display: block;
+  width: min(60vw, 18rem);
+  max-height: 45vh;
+  object-fit: contain;
+  filter:
+    drop-shadow(0 0 0.6rem rgb(255 255 255 / 100%))
+    drop-shadow(0 0 1.4rem rgb(255 255 255 / 90%));
+  opacity: 0;
+  transform: scale(0.65);
+  transform-origin: center;
+  animation: ghost-mission-image-enter 700ms ease-out forwards;
+}
+
+.ghost-mission-center-image.is-exiting {
+  animation: ghost-mission-image-exit 500ms ease-in forwards;
+}
+
+@keyframes ghost-mission-image-exit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  to {
+    opacity: 0;
+    transform: scale(0.65);
+  }
+}
+
+@keyframes ghost-mission-image-enter {
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes ghost-mission-image-float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-4px);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ghost-mission-center-image-float {
+    animation: none;
+  }
+
+  .ghost-mission-center-image:not(.is-exiting) {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
+
+  .ghost-mission-center-image.is-exiting {
+    animation: ghost-mission-image-exit 1ms linear forwards;
+  }
+}
+
+.ghost-mission-story .collectible-reveal__stamp {
+  width: min(18rem, 70vw);
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
+.ghost-mission-story .collectible-reveal__stamp img {
+  max-width: 100%;
+  max-height: 16rem;
+}

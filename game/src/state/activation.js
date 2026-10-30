@@ -88,6 +88,16 @@ export function resolveTokenActivation(gameState, token, routeKind) {
         gameState.mission6Unlocked &&
         allRequiredComplete)
 
+if (
+  missionIsAvailable &&
+  gameState.activeMissionId === missionId &&
+  progress?.itemCollected &&
+  !progress.storyWrapped &&
+  !progress.collectionRevealSeen
+) {
+  return { kind: 'silent' }
+}
+
     if (
       !missionIsAvailable ||
       gameState.activeMissionId !== missionId ||

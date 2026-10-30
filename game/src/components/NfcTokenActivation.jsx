@@ -11,6 +11,33 @@ import {
   PREMATURE_TOKEN_WARNING,
   resolveTokenActivation,
 } from '../state/activation'
+import { MISSION_BY_COLLECTION_TOKEN } from '../data/missions'
+
+const DIAGNOSTIC_KEY = 'nfc-hunt-activation-diagnostic'
+const DIAGNOSTIC_COUNT_KEY = 'nfc-hunt-activation-count'
+
+function saveActivationDiagnostic(diagnostic) {
+  window.localStorage.setItem(
+    DIAGNOSTIC_KEY,
+    JSON.stringify(diagnostic, null, 2),
+  )
+}
+
+function recordActivationDiagnostic(diagnostic) {
+  const attempt =
+    Number(window.localStorage.getItem(DIAGNOSTIC_COUNT_KEY) ?? '0') + 1
+
+  window.localStorage.setItem(DIAGNOSTIC_COUNT_KEY, String(attempt))
+
+  const entry = {
+    attempt,
+    timestamp: new Date().toISOString(),
+    ...diagnostic,
+  }
+
+  saveActivationDiagnostic(entry)
+  return entry
+}
 
 function getSavedGamePath(gameState) {
   if (!gameState.ticketNumber || gameState.playerCategory === null) {
@@ -53,7 +80,23 @@ function NfcTokenActivation({ routeKind }) {
           token,
           routeKind,
         )
+const matchedMissionId = MISSION_BY_COLLECTION_TOKEN[token] ?? null
+const matchedProgress = matchedMissionId
+  ? gameState.missions[matchedMissionId]
+  : null
 
+const activationDiagnostic = recordActivationDiagnostic({
+  routeKind,
+  matchedMissionId,
+  result: activation.kind,
+  stateBefore: {
+    activeMissionId: gameState.activeMissionId,
+    playerCategory: gameState.playerCategory,
+    collectionScanReady: matchedProgress?.collectionScanReady ?? null,
+    itemCollected: matchedProgress?.itemCollected ?? null,
+    storyWrapped: matchedProgress?.storyWrapped ?? null,
+  },
+})
         if (activation.kind === 'silent') {
           const cursor = gameState.dialogueCursor
 
@@ -167,6 +210,16 @@ function NfcTokenActivation({ routeKind }) {
               },
             },
           })
+
+activationDiagnostic.result = 'collect saved'
+activationDiagnostic.stateAfter = {
+  activeMissionId: gameState.activeMissionId,
+  collectionScanReady: false,
+  itemCollected: true,
+  collectionRevealSeen: false,
+}
+saveActivationDiagnostic(activationDiagnostic)
+
           navigate(`/${activation.missionId}`, { replace: true })
           return
         }

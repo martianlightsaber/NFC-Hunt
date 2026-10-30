@@ -6,6 +6,8 @@ import { missions } from './data/missions'
 import NfcTokenActivation from './components/NfcTokenActivation'
 import MissionRoute from './components/MissionRoute'
 import GhostWelcomeScreen from './components/GhostWelcomeScreen'
+import GhostOpeningStory from './components/GhostOpeningStory'
+import GhostMissionRoute from './components/GhostMissionRoute'
 
 function App() {
   return (
@@ -22,7 +24,7 @@ function App() {
 
       <Route
         path="/opening"
-          element={<OpeningStoryScreen />}
+          element={<GhostOpeningStory />}
       />
 
       {Object.entries(missions).map(([missionId, mission]) => (
@@ -30,7 +32,7 @@ function App() {
           key={missionId}
           path={`/${missionId}`}
           element={
-            <MissionRoute
+            <GhostMissionRoute
               missionId={missionId}
               mission={mission}
             />
