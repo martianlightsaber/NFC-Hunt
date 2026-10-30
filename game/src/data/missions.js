@@ -1,6 +1,11 @@
 const BAI_WUCHANG_PORTRAIT = '/images/baiwuchang_pfp.png'
 const MOS_OFFICER_PORTRAIT = '/images/mos-officer.png'
 const XAVIER_PORTRAIT = '/images/xavier_pfp.png'
+const ZAYNE_PORTRAIT = '/images/zayne_pfp.png'
+const RAFAYEL_PORTRAIT = '/images/rafayel_pfp.png'
+const SYLUS_PORTRAIT = '/images/sylus_pfp.png'
+const CALEB_PORTRAIT = '/images/caleb_pfp.png'
+const VALKO_PORTRAIT = '/images/valko_pfp.png'
 const DEFAULT_MISSION_BACKGROUND = '/images/moonlitgarden.jpg'
 
 export const missions = {
@@ -24,7 +29,7 @@ export const missions = {
                {text: 'base of a green tree ', bold: true},
                {text: 'in the cooled dome the mortals call "Cloud Forest".'},],
       },
-      { text: [{text: "I've been searching near the bases of trees for some time no-... was that a snore?", italic: true},], },
+      { text: [{text: "I've been searching near the bases of trees for some time no-... wait who's snoring?", italic: true},], },
       { text: 'My scrutiny seems to have awakened the little rabbit spirit, and he yawns and rubs his eyes sleepily.', 
         centerImage: '/images/xavier.png',
       },
@@ -51,14 +56,12 @@ export const missions = {
     },
     wrapUpDialogue: [
       {
-        type: 'scan-prompt',
         speaker: 'Xavier',
         portrait: XAVIER_PORTRAIT,
         text: "Your soul has helped me cultivate from a lowly bunny to the spirit I am today. If you ever need me, use incense sticks and the talisman to call me.",
         centerImage: '/images/xavier.png',
       },
       {
-        type: 'scan-prompt',
         speaker: 'Xavier',
         portrait: XAVIER_PORTRAIT,
         text: "I will find you from whichever tree or vegetable garden I may be napping in.",
@@ -77,32 +80,79 @@ export const missions = {
     id: 'mission-2',
     title: 'Thian Hock Keng Temple',
     required: true,
-    backgroundImage: DEFAULT_MISSION_BACKGROUND,
+    backgroundImage: '/images/temple.png',
     collectionToken: 'd8b291fc4e6307a5ad19c02f8756e341',
     dialogue: [
-      { text: 'A strange presence lingers along the old mountain path.' },
+      { text: [{text: "I wasn't expecting the temples to still look the same after a thousand years, but it's nice to see a small piece of home.", italic: true},], },
+      { text: [{text: "I should pay my respects to the dieties for giving me this second chance at life.", italic: true},], },
       {
         speaker: 'MOS Officer',
         portrait: MOS_OFFICER_PORTRAIT,
-        text: 'A rogue cultivator was seen nearby, but no one knows where they went.',
+        text: 'My Lady, the deities here protect travellers, and you have travelled far in space and time.',
       },
       {
-        type: 'scan-prompt',
         speaker: 'MOS Officer',
         portrait: MOS_OFFICER_PORTRAIT,
-        text: 'Look for a trace of their passage. Search the area now.',
+        text: 'I need to depart for an errand, please take your time to heal in the spiritual essence of this place for a while, the day is yet young.',
+      },
+      { text: 'I wander past the altars of the various deities, taking in the rich aroma of incense and offerings.' },
+      { text: [{text: "Is that... "},
+               {text: "a pile of sweets???", bold: true},], 
+      },
+      { text: [{text: "Deities' taste in offerings sure have changed over the last thousand years...", italic: true}],},
+      { text: 'Suddenly, I hear the tablecloth rustle near my feet. Curious, I bend down to look underneath.' },
+      { text: 'A big pair of serious golden eyes looks back at me, and I startle back.' },
+      { text: [{text: "A tiny Jiangshi!!!", italic: true}],},
+      { text: [{text: "What is a Jiangshi doing in a temple?", italic: true}],},
+      {
+        speaker: '???',
+        portrait: ZAYNE_PORTRAIT,
+        text: 'Hello, my name is Zayne. Are you here to pray for healing?',
+        centerImage: '/images/zayne.png',
+      },
+      { text: "'Healing? But you're a Jiangshi'" },
+      { text: [{text: "Nevertheless, amidst my confusion, the name 'Zayne' brings a sense of calm that's both new and familiar at once.", italic: true}],},
+      {
+        speaker: 'Zayne',
+        portrait: ZAYNE_PORTRAIT,
+        text: 'Yes, the principles which revive us also revive others. This era is plentiful in sweets, but low in knowledge of the ancient arts. It is a fair exchange.'
+      },
+      { text: "As we speak, he unwraps a candy and savors it, continuing to eye me critically. After what feels like a minute of staring, he speaks." },
+      {
+        speaker: 'Zayne',
+        portrait: ZAYNE_PORTRAIT,
+        text: [{text: 'I can sense that your '},
+               {text: 'qi ', italic: true},
+               {text: 'is incomplete. It turns out I have just the thing for you.'},]
+      },
+      { text: "With a half-millimeter smile, he produces a talisman which glows with the power of a soul fragment." },
+      {
+        type: 'scan-prompt',
+        speaker: 'Zayne',
+        portrait: ZAYNE_PORTRAIT,
+        text: 'I am glad to see you again, my Goddess. You must reclaim your full power at once. Please touch your Soulhunter to this talisman.'
       },
     ],
     collectible: {
       id: 'rogue-cultivator-trace',
       name: 'Rogue Cultivator Trace',
-      image: null,
+      image: '/images/zayne_talisman.png',
     },
     wrapUpDialogue: [
       {
+        speaker: 'Zayne',
+        portrait: ZAYNE_PORTRAIT,
+        text: "Much better. I will see you back here for regular check-ups. Bring that talisman, and the appropriate offerings. No carrot cakes.",
+        centerImage: '/images/zayne.png',
+      },
+      { text: "With business settled, he returns to his spot under the table, which turns out to hide a large library of tomes.",
+        dismissCenterImage: true,
+      },
+      {
         speaker: 'MOS Officer',
         portrait: MOS_OFFICER_PORTRAIT,
-        text: 'This trace should reveal which way the cultivator went.',
+        text: "I have returned! It looks like my Lady has the heart of a healer.",
+
       },
     ],
   },
