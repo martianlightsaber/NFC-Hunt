@@ -41,12 +41,17 @@ export const missions = {
         portrait: XAVIER_PORTRAIT,
         text: 'What took you so long? I ended up taking the longest nap because I spent so long waiting for you.',
       },
+      {
+        speaker: 'Xavier',
+        portrait: XAVIER_PORTRAIT,
+        text: 'I kept the essence of your soul bound to this talisman for safekeeping.',
+      },
       { text: 'Xavier holds out a talisman and looks at me expectantly.' },
       {
         type: 'scan-prompt',
         speaker: 'Xavier',
         portrait: XAVIER_PORTRAIT,
-        text: "I kept the essence of your soul bound to this talisman for safekeeping. Go on, hold your Soulhunter to my talisman and retrieve what's yours.",
+        text: "Go on, hold your Soulhunter to my talisman and retrieve what's yours. (Tap your phone to the talisman on the chibi)",
       },
     ],
     collectible: {
@@ -100,7 +105,10 @@ export const missions = {
                {text: "a pile of sweets???", bold: true},], 
       },
       { text: [{text: "Deities' taste in offerings sure have changed over the last thousand years...", italic: true}],},
-      { text: 'Suddenly, I hear the tablecloth rustle near my feet. Curious, I bend down to look underneath.' },
+      { text: [{text: 'Suddenly, I hear the '},
+               {text: 'tablecloth ', bold:true},
+               {text: 'rustle near my feet. Curious, I bend down to '},
+               {text: 'look underneath.', bold:true}] },
       { text: 'A big pair of serious golden eyes looks back at me, and I startle back.' },
       { text: [{text: "A tiny Jiangshi!!!", italic: true}],},
       { text: [{text: "What is a Jiangshi doing in a temple?", italic: true}],},
@@ -127,10 +135,15 @@ export const missions = {
       },
       { text: "With a half-millimeter smile, he produces a talisman which glows with the power of a soul fragment." },
       {
+        speaker: 'Zayne',
+        portrait: ZAYNE_PORTRAIT,
+        text: 'I am glad to see you again, my Goddess. You must reclaim your full power at once.'
+      },
+      {
         type: 'scan-prompt',
         speaker: 'Zayne',
         portrait: ZAYNE_PORTRAIT,
-        text: 'I am glad to see you again, my Goddess. You must reclaim your full power at once. Please touch your Soulhunter to this talisman.'
+        text: 'Please touch your Soulhunter to this talisman. (Tap your phone to the talisman on the chibi)'
       },
     ],
     collectible: {
@@ -203,7 +216,9 @@ export const missions = {
         speaker: 'Rafayel',
         portrait: RAFAYEL_PORTRAIT,
         text: [{text: "Details schmetails. ", italic: true},
-               {text: "Miss guardian angel has a beautiful and artistic soul, I have treasured it these eigh- one thousand years."}],
+               {text: "Miss guardian angel has a beautiful and artistic soul, I have treasured it these eig- "},
+               {text: "one thousand ", italic:true},
+               {text: "years."}],
       },
       {
         speaker: 'Rafayel',
@@ -214,7 +229,7 @@ export const missions = {
         type: 'scan-prompt',
         speaker: 'Rafayel',
         portrait: RAFAYEL_PORTRAIT,
-        text: 'This talisman is a symbol of our connection, keep it safe in your Soulhunter.',
+        text: 'This talisman is a symbol of our connection, keep it safe in your Soulhunter. (Tap your phone to the talisman on the chibi)',
       },
     ],
     collectible: {
@@ -232,7 +247,7 @@ export const missions = {
       {
         speaker: 'MOS Officer',
         portrait: MOS_OFFICER_PORTRAIT,
-        text: "This officer is glad to see that you have such a free spirit My Lady. The powers of imagination will no doubt speed your soul's recovery.",
+        text: "This officer is glad to see that you have such a free spirit my Lady. The powers of imagination will no doubt speed your soul's recovery.",
       },
     ],
   },
@@ -290,7 +305,7 @@ export const missions = {
       { text: "He smirks playfully, waving a talisman imbued with the power of a soul fragment as we tussle until I eventually emerge victorious." },
       {
         type: 'scan-prompt',
-        text: "I let the Soulhunter absorb the soul fragment's power while I inspect the unusual talisman.",
+        text: "I let the Soulhunter absorb the soul fragment's power while I inspect the unusual talisman. (Tap your phone to the talisman on the chibi)",
       },
     ],
     collectible: {
@@ -361,7 +376,7 @@ export const missions = {
       },
       {
         type: 'scan-prompt',
-        text: 'He hands me a talisman containing my soul fragment and watches as I absorb it through the Soulhunter',
+        text: 'He hands me a talisman containing my soul fragment and watches as I absorb it through the Soulhunter. (Tap your phone to the talisman on the chibi)',
       },
     ],
     collectible: {
@@ -426,7 +441,7 @@ export const missions = {
         type: 'scan-prompt',
         speaker: 'MOS Officer',
         portrait: MOS_OFFICER_PORTRAIT,
-        text: "Quick! Store his soul in the Soulhunter and we'll bring him to the healers.",
+        text: "Quick! Store his soul in the Soulhunter and we'll bring him to the healers. (Tap your phone to the chibi)",
       },
     ],
     collectible: {

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import DialoguePlayer from './DialoguePlayer'
 import SceneLayout from './SceneLayout'
@@ -87,6 +87,41 @@ function GhostOpeningStory() {
   const showOpeningSprite =
     openingFlow.phase === 'opening-introduction' &&
     !currentLine.choices
+
+    const [spriteLayout, setSpriteLayout] = useState(null)
+
+  useLayoutEffect(() => {
+    const textbox = document.querySelector(
+      '.ghost-opening-story .textbox-container',
+    )
+
+    if (!showOpeningSprite || !textbox) {
+      setSpriteLayout(null)
+      return
+    }
+
+    const updateSpriteLayout = () => {
+      const textboxTop = textbox.getBoundingClientRect().top
+
+      setSpriteLayout({
+        centerY: (textboxTop * 2) / 3,
+        maxHeight: (textboxTop * 2) / 3,
+      })
+    }
+
+    updateSpriteLayout()
+
+    const observer = new ResizeObserver(updateSpriteLayout)
+    observer.observe(textbox)
+    window.addEventListener('resize', updateSpriteLayout)
+    window.visualViewport?.addEventListener('resize', updateSpriteLayout)
+
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('resize', updateSpriteLayout)
+      window.visualViewport?.removeEventListener('resize', updateSpriteLayout)
+    }
+  }, [openingLineIndex, openingFlow.phase, showOpeningSprite])
 
   const showGhostBlink =
     isInitialGhostOpeningLine && !ghostBlinkFinished
@@ -231,13 +266,21 @@ function GhostOpeningStory() {
     >
       {openingStoryScene}
 
-      {showOpeningSprite && (
-        <img
-          className="ghost-opening-sprite"
-          src={`${import.meta.env.BASE_URL}images/willowisp.png`}
-          alt=""
-          aria-hidden="true"
-        />
+      {showOpeningSprite && spriteLayout && (
+        <div
+          className="ghost-opening-sprite-position"
+          style={{
+            '--opening-sprite-center-y': `${spriteLayout.centerY}px`,
+            '--opening-sprite-max-height': `${spriteLayout.maxHeight}px`,
+          }}
+        >
+          <img
+            className="ghost-opening-sprite"
+            src={`${import.meta.env.BASE_URL}images/willowisp.png`}
+            alt=""
+            aria-hidden="true"
+          />
+        </div>
       )}
 
       {showGhostBlink && (

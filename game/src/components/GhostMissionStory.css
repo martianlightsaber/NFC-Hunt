@@ -16,13 +16,27 @@
   text-align: left;
 }
 
+.ghost-mission-background {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
+
 .ghost-mission-center-image-position {
   position: fixed;
-  top: 50%;
+  top: var(--center-image-y);
   left: 50%;
   z-index: 3;
   pointer-events: none;
   transform: translate(-50%, -50%);
+}
+
+.ghost-mission-story:has(.collection-warning-backdrop) .dialogue-player {
+  z-index: 4;
 }
 
 .ghost-mission-center-image-float {
@@ -32,7 +46,7 @@
 .ghost-mission-center-image {
   display: block;
   width: min(60vw, 18rem);
-  max-height: 45vh;
+  max-height: var(--center-image-max-height);
   object-fit: contain;
   filter:
     drop-shadow(0 0 0.6rem rgb(255 255 255 / 100%))
@@ -90,6 +104,18 @@
 
   .ghost-mission-center-image.is-exiting {
     animation: ghost-mission-image-exit 1ms linear forwards;
+  }
+}
+
+@media (min-aspect-ratio: 4 / 5) and (max-aspect-ratio: 6 / 5) {
+  .ghost-mission-center-image-position {
+    top: 19vh;
+    top: 19dvh;
+  }
+
+  .ghost-mission-center-image {
+    max-height: 28vh;
+    max-height: 28dvh;
   }
 }
 

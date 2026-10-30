@@ -117,27 +117,31 @@
   padding-left: 0.7rem;
 }
 
-.ghost-opening-sprite {
+.ghost-opening-sprite-position {
   position: fixed;
-  top: max(15rem, env(safe-area-inset-top));
+  top: var(--opening-sprite-center-y);
   left: 50%;
   z-index: 5;
-  width: min(34vw, 9rem);
-  max-height: 28vh;
-  object-fit: contain;
   pointer-events: none;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
+}
+
+.ghost-opening-sprite {
+  display: block;
+  width: min(34vw, 9rem);
+  max-height: var(--opening-sprite-max-height);
+  object-fit: contain;
   animation: ghost-opening-sprite-float 3s ease-in-out infinite;
 }
 
 @keyframes ghost-opening-sprite-float {
   0%,
   100% {
-    transform: translate(-50%, 0);
+    transform: translateY(0);
   }
 
   50% {
-    transform: translate(-50%, -8px);
+    transform: translateY(-8px);
   }
 }
 
@@ -160,3 +164,4 @@
 .ghost-opening-story:has(.collection-warning-backdrop) .scene-layout {
   z-index: 6;
 }
+

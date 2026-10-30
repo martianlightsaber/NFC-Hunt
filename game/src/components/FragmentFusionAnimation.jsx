@@ -65,7 +65,10 @@ function FragmentFusionAnimation({ collectibles, onComplete }) {
               }}
             >
               {collectible.image ? (
-                <img src={collectible.image} alt={collectible.name} />
+                <img
+                    src={`${import.meta.env.BASE_URL}${collectible.image.replace(/^\/+/, '')}`}
+                    alt={collectible.name}
+                    />
               ) : (
                 <span>{collectible.name}</span>
               )}

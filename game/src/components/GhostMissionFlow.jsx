@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useLayoutEffect, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import {
   areRequiredMissionsComplete,
@@ -43,7 +43,47 @@ function GhostMissionFlow({ missionId, mission }) {
 
   const [lineIndex, setLineIndex] = useState(initialLineIndex)
   const currentLine = dialogue[lineIndex]
+
+    const [centerImageLayout, setCenterImageLayout] = useState(null)
+
+  useLayoutEffect(() => {
+    const textbox = document.querySelector(
+      '.ghost-mission-story .textbox-container',
+    )
+
+    if (!textbox) return
+
+    const updateImageLayout = () => {
+      const textboxTop = textbox.getBoundingClientRect().top
+
+      setCenterImageLayout({
+        centerY: (textboxTop * 2) / 3,
+        maxHeight: (textboxTop * 2) / 3,
+      })
+    }
+
+    updateImageLayout()
+
+    const observer = new ResizeObserver(updateImageLayout)
+    observer.observe(textbox)
+    window.addEventListener('resize', updateImageLayout)
+    window.visualViewport?.addEventListener('resize', updateImageLayout)
+
+    return () => {
+      observer.disconnect()
+      window.removeEventListener('resize', updateImageLayout)
+      window.visualViewport?.removeEventListener('resize', updateImageLayout)
+    }
+  }, [lineIndex, phase])
+
   const isLastLine = lineIndex === dialogue.length - 1
+
+  const activeBackgroundImage = dialogue
+  .slice(0, lineIndex + 1)
+  .reduce(
+    (background, line) => line.backgroundImage ?? background,
+    mission.backgroundImage ?? '/images/moonlitgarden.jpg',
+  )
 
   const precedingCenterImage = dialogue
     .slice(0, lineIndex)
@@ -261,8 +301,18 @@ function GhostMissionFlow({ missionId, mission }) {
 
     return (
     <>
-        {displayedCenterImage && (
-        <div className="ghost-mission-center-image-position">
+        <div
+            className="ghost-mission-background"
+            style={{
+                backgroundImage: `url("${import.meta.env.BASE_URL}${activeBackgroundImage.replace(/^\/+/, '')}")`,
+            }}
+            aria-hidden="true"
+        />
+        {displayedCenterImage && centerImageLayout && (
+        <div className="ghost-mission-center-image-position" style={{
+            '--center-image-y': `${centerImageLayout.centerY}px`,
+            '--center-image-max-height': `${centerImageLayout.maxHeight}px`,
+            }}>
             <div className="ghost-mission-center-image-float">
             <img
               key={displayedCenterImage}
